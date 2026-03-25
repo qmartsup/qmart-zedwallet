@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QMart · ZedWallet SIM Mapper</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --qblue: #00b2e3;
+  --qblue-dark: #0090b8;
+  --qblue-light: #e6f8fd;
+  --qblue-mid: #b3e8f7;
+  --qblack: #231f20;
+  --qgrey-dark: #808285;
+  --qgrey-mid: #bcbec0;
+  --qgrey-light: #dcddde;
+  --qwhite: #ffffff;
+  --bg: #f4f5f6;
+  --text: #231f20;
+  --text2: #808285;
+  --border: #dcddde;
+  --green: #1a8a3a;
+  --green-light: #e6f5eb;
+  --orange: #e07b00;
+  --orange-light: #fff3e0;
+  --red: #d42b2b;
+  --red-light: #fdeaea;
+  --shadow: 0 2px 12px rgba(35,31,32,0.10);
+  --radius: 10px;
+  --admin-accent: #231f20;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+
+/* ── HEADER ── */
+header{
+  background:var(--qblack);
+  height:54px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,0.35);
+}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-q{
+  width:32px;height:32px;
+  background:var(--qblue);
+  border-radius:50% 50% 50% 6px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:20px;color:var(--qblack);letter-spacing:-1px;
+}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--qwhite);letter-spacing:1.5px;}
+.logo-text span{color:var(--qblue);}
+.logo-sub{font-size:10px;color:var(--qgrey-mid);letter-spacing:0.8px;font-weight:600;text-transform:uppercase;}
+.session-badge{
+  background:rgba(0,178,227,0.15);border:1px solid rgba(0,178,227,0.3);
+  border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;
+  color:var(--qblue);cursor:pointer;letter-spacing:0.5px;
+  display:flex;align-items:center;gap:6px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.session-badge.admin{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--qwhite);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--qblue);flex-shrink:0;}
+.dot.admin{background:#fff;}
+
+/* ── TABS ── */
+.tabs{
+  display:flex;background:var(--qblack);
+  border-bottom:2px solid rgba(0,178,227,0.2);
+  position:sticky;top:54px;z-index:99;
+}
+.tab{
+  flex:1;padding:12px 6px;text-align:center;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
+  color:var(--qgrey-mid);cursor:pointer;border-bottom:3px solid transparent;
+  transition:all 0.2s;
+}
+.tab.active{color:var(--qblue);border-bottom-color:var(--qblue);}
+.tab:hover:not(.active){color:var(--qwhite);}
+.tab-icon{display:block;font-size:16px;margin-bottom:2px;}
+
+/* ── MAIN ── */
+main{max-width:520px;margin:0 auto;padding:16px 12px 80px;}
+
+/* ── CARDS ── */
+.card{background:var(--qwhite);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;
+  text-transform:uppercase;letter-spacing:1.2px;color:var(--qgrey-dark);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.card-title::before{content:'';display:block;width:3px;height:14px;background:var(--qblue);border-radius:2px;}
+
+/* ── FORM ── */
+label{display:block;font-size:11px;font-weight:700;color:var(--qgrey-dark);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+input,select{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:15px;font-family:'Barlow',sans-serif;background:var(--qwhite);color:var(--text);
+  outline:none;transition:border-color 0.2s;
+}
+input:focus,select:focus{border-color:var(--qblue);}
+input.valid{border-color:var(--green);}
+input.invalid{border-color:var(--red);}
+.field{margin-bottom:14px;}
+.input-wrap{position:relative;}
+.input-count{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--qgrey-dark);pointer-events:none;font-weight:700;}
+.hint{font-size:11px;color:var(--text2);margin-top:4px;}
+
+/* ── BUTTONS ── */
+.btn{
+  width:100%;padding:13px;border:none;border-radius:8px;
+  font-size:14px;font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;
+}
+.btn-blue{background:var(--qblue);color:var(--qblack);}
+.btn-blue:hover{background:var(--qblue-dark);}
+.btn-blue:disabled{background:var(--qgrey-light);color:var(--qgrey-dark);cursor:not-allowed;}
+.btn-black{background:var(--qblack);color:var(--qwhite);}
+.btn-black:hover{background:#3a3435;}
+.btn-outline{background:transparent;border:2px solid var(--qblue);color:var(--qblue);}
+.btn-outline:hover{background:var(--qblue-light);}
+
+/* ── SETUP OVERLAY ── */
+#setupOverlay{
+  position:fixed;inset:0;background:rgba(35,31,32,0.88);
+  z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(4px);
+}
+.setup-modal{
+  background:var(--qwhite);border-radius:16px;padding:0;width:100%;max-width:400px;
+  box-shadow:0 16px 48px rgba(0,0,0,0.4);overflow:hidden;
+}
+.modal-header{
+  background:var(--qblack);padding:24px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.modal-header::before{
+  content:'Q';
+  position:absolute;right:-20px;top:-20px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:120px;
+  color:rgba(0,178,227,0.07);line-height:1;pointer-events:none;
+}
+.modal-logo{
+  width:52px;height:52px;background:var(--qblue);border-radius:50% 50% 50% 8px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px;
+}
+.modal-logo svg{width:28px;height:28px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--qwhite);letter-spacing:1px;}
+.modal-sub{font-size:12px;color:var(--qgrey-mid);margin-top:4px;letter-spacing:0.5px;}
+
+/* Role toggle */
+.role-toggle{display:flex;gap:0;background:var(--qgrey-light);border-radius:8px;overflow:hidden;margin-bottom:18px;}
+.role-btn{
+  flex:1;padding:10px 8px;text-align:center;cursor:pointer;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;
+  color:var(--qgrey-dark);transition:all 0.2s;border:none;background:transparent;
+  font-family:'Barlow',sans-serif;
+}
+.role-btn.active{background:var(--qblack);color:var(--qblue);}
+
+.modal-body{padding:20px;}
+.divider-line{height:1px;background:var(--qgrey-light);margin:14px 0;}
+
+/* ── DSA LIST ── */
+.search-wrap{position:relative;margin-bottom:10px;}
+.search-wrap input{padding-left:38px;}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--qgrey-dark);pointer-events:none;}
+
+.dsa-item{
+  border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;
+  margin-bottom:7px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.18s;
+}
+.dsa-item:hover{border-color:var(--qblue);background:var(--qblue-light);}
+.dsa-item.selected{border-color:var(--qblue);background:var(--qblue-light);}
+.dsa-av{
+  width:36px;height:36px;border-radius:50%;background:var(--qblack);
+  color:var(--qblue);display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;flex-shrink:0;
+}
+.dsa-item.selected .dsa-av{background:var(--qblue);color:var(--qblack);}
+.dsa-info{flex:1;min-width:0;}
+.dsa-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dsa-meta{font-size:11px;color:var(--text2);margin-top:1px;}
+.dsa-check{
+  width:20px;height:20px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:11px;color:transparent;transition:all 0.18s;
+}
+.dsa-item.selected .dsa-check{background:var(--qblue);border-color:var(--qblue);color:var(--qblack);}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;}
+.badge-pending{background:var(--orange-light);color:var(--orange);}
+.badge-approved{background:var(--green-light);color:var(--green);}
+.badge-rejected{background:var(--red-light);color:var(--red);}
+
+/* ── ALERTS ── */
+.alert{padding:11px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px;}
+.alert-success{background:var(--green-light);color:var(--green);border-left:3px solid var(--green);}
+.alert-error{background:var(--red-light);color:var(--red);border-left:3px solid var(--red);}
+.alert-info{background:var(--qblue-light);color:var(--qblue-dark);border-left:3px solid var(--qblue);}
+
+/* ── MDE INFO CARD ── */
+.mde-card{
+  background:linear-gradient(135deg,var(--qblack) 0%,#3a3435 100%);
+  border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:0 4px 16px rgba(35,31,32,0.25);
+  position:relative;overflow:hidden;
+}
+.mde-card::after{
+  content:'Q';position:absolute;right:-12px;top:-16px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:90px;
+  color:rgba(0,178,227,0.08);line-height:1;pointer-events:none;
+}
+.mde-av-big{
+  width:46px;height:46px;border-radius:50%;background:var(--qblue);
+  color:var(--qblack);display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;flex-shrink:0;
+}
+.mde-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;color:var(--qwhite);letter-spacing:0.3px;}
+.mde-card-num{font-size:12px;color:var(--qgrey-mid);margin-top:2px;}
+.mde-card-count{font-size:11px;color:var(--qblue);font-weight:700;margin-top:3px;letter-spacing:0.3px;}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--qwhite);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;border-top:3px solid var(--border);}
+.stat-card.blue{border-top-color:var(--qblue);}
+.stat-card.orange{border-top-color:var(--orange);}
+.stat-card.green{border-top-color:var(--green);}
+.stat-card.red{border-top-color:var(--red);}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;line-height:1;}
+.stat-num.blue{color:var(--qblue);}
+.stat-num.orange{color:var(--orange);}
+.stat-num.green{color:var(--green);}
+.stat-num.red{color:var(--red);}
+.stat-label{font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-top:4px;}
+
+/* ── ADMIN BANNER ── */
+.admin-banner{
+  background:var(--qblack);border-radius:var(--radius);padding:14px 18px;
+  margin-bottom:14px;display:flex;align-items:center;gap:12px;
+  border-left:4px solid var(--qblue);
+}
+.admin-banner-icon{font-size:24px;}
+.admin-banner-text{font-size:13px;color:var(--qgrey-mid);}
+.admin-banner-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:var(--qwhite);letter-spacing:0.5px;}
+
+/* ── PROVINCE TABLE ── */
+.prov-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--qgrey-light);}
+.prov-row:last-child{border-bottom:none;}
+.prov-name{font-size:13px;font-weight:700;width:130px;flex-shrink:0;}
+.prov-bar-wrap{flex:1;background:var(--qgrey-light);border-radius:4px;height:7px;overflow:hidden;}
+.prov-bar{height:7px;border-radius:4px;background:var(--qblue);}
+.prov-nums{font-size:11px;color:var(--text2);white-space:nowrap;text-align:right;min-width:80px;}
+.prov-nums strong{color:var(--text);}
+
+/* ── TAT ── */
+.tat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--qgrey-light);font-size:13px;}
+.tat-row:last-child{border-bottom:none;}
+.tat-val{font-weight:800;font-family:'Barlow Condensed',sans-serif;font-size:18px;}
+.tat-fast{color:var(--green);}
+.tat-med{color:var(--orange);}
+.tat-slow{color:var(--red);}
+
+/* ── SUB ITEMS ── */
+.sub-item{border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:border-color 0.2s;}
+.sub-item:hover{border-color:var(--qblue);}
+.sub-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.sub-dsa-name{font-size:14px;font-weight:700;}
+.sub-sim{font-family:monospace;font-size:12px;background:var(--bg);padding:3px 8px;border-radius:4px;letter-spacing:0.8px;margin-top:4px;display:inline-block;}
+.sub-meta{font-size:11px;color:var(--text2);margin-top:5px;}
+
+/* ── PROGRESS BAR ── */
+.bar-wrap{background:var(--qgrey-light);border-radius:4px;height:6px;margin-top:6px;overflow:hidden;}
+.bar{height:6px;border-radius:4px;transition:width 0.6s;}
+.bar-blue{background:var(--qblue);}
+.bar-orange{background:var(--orange);}
+.bar-green{background:var(--green);}
+
+/* ── LOADER ── */
+.loader{width:16px;height:16px;border:2px solid rgba(35,31,32,0.3);border-top-color:var(--qblack);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── DROPDOWN ── */
+#mdeDropdown{
+  border:1.5px solid var(--border);border-top:none;border-radius:0 0 8px 8px;
+  max-height:200px;overflow-y:auto;display:none;background:white;
+  position:absolute;left:0;right:0;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.dd-wrap{position:relative;}
+.dd-item{padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--qgrey-light);display:flex;justify-content:space-between;align-items:center;}
+.dd-item:hover{background:var(--qblue-light);}
+.dd-item:last-child{border-bottom:none;}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--qblack);color:var(--qwhite);padding:12px 20px;
+  border-radius:24px;font-size:13px;font-weight:600;z-index:999;transition:transform 0.3s;
+  pointer-events:none;max-width:300px;text-align:center;border-left:3px solid var(--qblue);
+}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:32px 16px;color:var(--text2);}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+
+.hidden{display:none!important;}
+hr.divider{border:none;border-top:1px solid var(--qgrey-light);margin:14px 0;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:var(--qblack);margin-bottom:8px;letter-spacing:0.5px;}
+
+/* ── ADMIN ACCESS NOTE ── */
+.access-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--qblue);color:var(--qblack);
+  border-radius:20px;padding:3px 10px;font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SETUP OVERLAY ══════════════ -->
+<div id="setupOverlay">
+<div class="setup-modal">
+  <div class="modal-header">
+    <div class="modal-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#231f20" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+    </div>
+    <div class="modal-title">ZEDWALLET SIM MAPPER</div>
+    <div class="modal-sub">QMart Zambia · DSA SIM Registration Portal</div>
+  </div>
+
+  <div class="modal-body">
+    <!-- Role toggle -->
+    <div class="role-toggle" id="roleToggle">
+      <button class="role-btn active" id="btnMDE" onclick="switchRole('mde')">🛒 MDE Login</button>
+      <button class="role-btn" id="btnAdmin" onclick="switchRole('admin')">🔐 Admin / Ops</button>
+    </div>
+
+    <!-- MDE FORM -->
+    <div id="mdeForm">
+      <div class="field">
+        <label>Your Name (MDE)</label>
+        <div class="dd-wrap">
+          <input type="text" id="mdeNameInput" placeholder="Type to search your name…" oninput="filterMDEList(this.value)" autocomplete="off">
+          <div id="mdeDropdown"></div>
+        </div>
+        <input type="hidden" id="selMDEName">
+        <input type="hidden" id="selMDENumber">
+      </div>
+      <div class="field hidden" id="mdeVerifyField">
+        <label>Your Phone Number (Verification)</label>
+        <input type="tel" id="mdePhoneVerify" placeholder="e.g. 0980123456">
+        <div class="hint">Must match your registered MDE number</div>
+      </div>
+      <div id="mdeSetupError" class="alert alert-error hidden"></div>
+      <button class="btn btn-blue" onclick="startMDESession()">START SESSION →</button>
+    </div>
+
+    <!-- ADMIN FORM -->
+    <div id="adminForm" class="hidden">
+      <div class="access-chip">🔐 Operations Access</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Enter the ZedWallet / QMart Ops admin code to access the full combined dashboard.</p>
+      <div class="field">
+        <label>Admin Name</label>
+        <select id="adminNameSel">
+          <option value="">Select your name…</option>
+          <option>Precious</option>
+          <option>Essau</option>
+          <option>Yvonne</option>
+          <option>Joshua</option>
+          <option>Moses Mwale</option>
+          <option>Gloria</option>
+          <option>QMart Operations</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Admin Access Code</label>
+        <input type="password" id="adminCodeInput" placeholder="Enter admin access code">
+        <div class="hint">Contact your system administrator for the access code</div>
+      </div>
+      <div id="adminSetupError" class="alert alert-error hidden"></div>
+      <button class="btn btn-black" onclick="startAdminSession()">ACCESS DASHBOARD →</button>
+    </div>
+
+    <div style="text-align:center;margin-top:14px;font-size:10px;color:var(--qgrey-mid);">
+      QMart Zambia · ZedWallet Operations · v2.1
+    </div>
+    <div id="liveDataStatus" style="text-align:center;margin-top:6px;font-size:10px;color:var(--qgrey-mid);">
+      🔄 Checking for live data…
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="logo-wrap">
+    <div class="logo-q">Q</div>
+    <div>
+      <div class="logo-text"><span>Q</span>MART</div>
+      <div class="logo-sub">ZedWallet SIM Mapper</div>
+    </div>
+  </div>
+  <div class="session-badge" id="sessionBadge" onclick="document.getElementById('setupOverlay').style.display='flex'">
+    <div class="dot" id="sessDot"></div>
+    <span id="sessLabel">NO SESSION</span>
+  </div>
+</header>
+
+<!-- ══════════════ TABS ══════════════ -->
+<div class="tabs" id="mainTabs">
+  <div class="tab active" id="tab-btn-submit" onclick="showTab('submit')">
+    <span class="tab-icon">📤</span>SUBMIT SIM
+  </div>
+  <div class="tab" id="tab-btn-log" onclick="showTab('log')">
+    <span class="tab-icon">📋</span>MY LOG
+  </div>
+  <div class="tab" id="tab-btn-dashboard" onclick="showTab('dashboard')">
+    <span class="tab-icon">📊</span>DASHBOARD
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════ TAB: SUBMIT ═══════ -->
+<div id="tab-submit">
+  <div id="noSessMsg" class="alert alert-info">
+    ⚡ Please start a session — tap <strong>NO SESSION</strong> above.
+  </div>
+
+  <div id="adminSubmitNote" class="hidden">
+    <div class="admin-banner">
+      <div class="admin-banner-icon">🔐</div>
+      <div>
+        <div class="admin-banner-title">ADMIN ACCESS ACTIVE</div>
+        <div class="admin-banner-text">Use the Dashboard tab to view all submissions.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="submitForm" class="hidden">
+    <!-- MDE card -->
+    <div class="mde-card">
+      <div class="mde-av-big" id="mdeAvBig">M</div>
+      <div>
+        <div class="mde-card-name" id="mdeCardName">MDE Name</div>
+        <div class="mde-card-num" id="mdeCardNum">+260 ...</div>
+        <div class="mde-card-count" id="mdeCardCount">0 DSAs assigned</div>
+      </div>
+    </div>
+
+    <!-- DSA selector -->
+    <div class="card">
+      <div class="card-title">Select DSA</div>
+      <div class="search-wrap">
+        <span class="search-ico">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input type="text" id="dsaSearch" placeholder="Search DSA by name or number…" oninput="filterDSAs(this.value)">
+      </div>
+      <div id="dsaList"></div>
+    </div>
+
+    <!-- SIM entry -->
+    <div class="card">
+      <div class="card-title">SIM Serial Number</div>
+      <div id="selDSAAlert" class="alert alert-info hidden"></div>
+      <div class="field">
+        <label>ICCID / SIM Serial (20 digits)</label>
+        <div class="input-wrap">
+          <input type="tel" id="simInput" maxlength="20" placeholder="Enter 20-digit SIM serial"
+            oninput="validateSIM(this)" style="letter-spacing:1.5px;font-family:monospace;font-size:16px;font-weight:700;">
+          <span class="input-count" id="simCount">0/20</span>
+        </div>
+        <div class="hint" id="simHint">Enter the 20-digit ICCID printed on the SIM card</div>
+      </div>
+      <div id="submitAlert" class="hidden"></div>
+      <button class="btn btn-blue" id="submitBtn" onclick="submitSIM()" disabled>SUBMIT SIM MAPPING →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB: LOG ═══════ -->
+<div id="tab-log" class="hidden">
+  <div class="card">
+    <div class="card-title">My Submissions</div>
+    <div id="logContent"><div class="empty"><div class="empty-icon">📋</div>No submissions yet.</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Refresh From Server</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Pull latest status updates from Google Sheets.</p>
+    <button class="btn btn-outline" onclick="loadMyLog()">🔄 REFRESH FROM GOOGLE SHEETS</button>
+  </div>
+</div>
+
+<!-- ═══════ TAB: DASHBOARD ═══════ -->
+<div id="tab-dashboard" class="hidden">
+  <!-- MDE limited view notice -->
+  <div id="dashMDEnotice" class="hidden">
+    <div class="mde-card" style="margin-bottom:14px;">
+      <div class="mde-av-big" id="dashAvBig">M</div>
+      <div>
+        <div class="mde-card-name" id="dashMDEName">—</div>
+        <div class="mde-card-num">My Submissions Dashboard</div>
+        <div class="mde-card-count" id="dashMDEsub">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin full view notice -->
+  <div id="dashAdminNotice" class="hidden">
+    <div class="admin-banner" style="margin-bottom:14px;">
+      <div class="admin-banner-icon">🔐</div>
+      <div>
+        <div class="admin-banner-title">OPERATIONS DASHBOARD</div>
+        <div class="admin-banner-text" id="adminWelcomeMsg">All MDE submissions — combined view</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-num blue" id="d-total">—</div><div class="stat-label">Total</div></div>
+    <div class="stat-card orange"><div class="stat-num orange" id="d-pending">—</div><div class="stat-label">Pending</div></div>
+    <div class="stat-card green"><div class="stat-num green" id="d-approved">—</div><div class="stat-label">Approved</div></div>
+    <div class="stat-card red"><div class="stat-num red" id="d-rejected">—</div><div class="stat-label">Rejected</div></div>
+  </div>
+
+  <!-- TAT -->
+  <div class="card">
+    <div class="card-title">Turnaround Time (TAT)</div>
+    <div id="tatStats"><div class="empty"><div>Load to see TAT metrics.</div></div></div>
+  </div>
+
+  <!-- Pending wait -->
+  <div class="card">
+    <div class="card-title">Avg Pending Wait Time</div>
+    <div id="pendingWait"><div class="empty"><div>Load to see waiting times.</div></div></div>
+  </div>
+
+  <!-- Province breakdown (admin only) -->
+  <div class="card" id="provinceCard" style="display:none;">
+    <div class="card-title">Submissions by Province</div>
+    <div id="provinceStats"><div class="empty"><div class="empty-icon">🗺</div>Load to see provincial data.</div></div>
+  </div>
+
+  <!-- MDE breakdown (admin only) -->
+  <div class="card" id="mdeBreakdownCard" style="display:none;">
+    <div class="card-title">Top MDEs by Submissions</div>
+    <div id="mdeBreakdown"><div class="empty"><div>Load to see MDE data.</div></div></div>
+  </div>
+
+  <button class="btn btn-blue" id="dashLoadBtn" onclick="loadDashboard()">🔄 LOAD DASHBOARD</button>
+</div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG — replace with your deployed Apps Script URL
+// ═══════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
+
+// Admin access code (change this before deploying!)
+const ADMIN_CODE = 'QMART2025';
+
+// ═══════════════════════════════════════════════
+// MDE DATA (117 MDEs, 786 DSAs from Pending list)
+// ═══════════════════════════════════════════════
+const MDE_DATA = [{"name":"Mordecai kabwe","number":"0980083898","dsas":[{"name":"ESTHER MUTALE","number":"0980800798","province":"LUSAKA SOUTH","phone":"0980800798","shortCode":"420942"},{"name":"SAMU KANGOMBE","number":"0980020085","province":"LUSAKA SOUTH","phone":"0980020085","shortCode":"471461"},{"name":"MPHAMVU THOLE","number":"0980411317","province":"LUSAKA SOUTH","phone":"0980411317","shortCode":"449358"},{"name":"HONEST MUSONDA","number":"0980023734","province":"LUSAKA SOUTH","phone":"0980023734","shortCode":"477413"},{"name":"CHIZYUKA GAYAS","number":"0980655656","province":"LUSAKA SOUTH","phone":"0980655656","shortCode":"426621"},{"name":"VANESSA CHALI","number":"0980602777","province":"LUSAKA SOUTH","phone":"0980602777","shortCode":"498873"},{"name":"JOHN SASA","number":"0980257590","province":"LUSAKA SOUTH","phone":"0980257590","shortCode":"429091"},{"name":"MWILA KAMBALA","number":"0980800942","province":"LUSAKA SOUTH","phone":"0980800942","shortCode":"428120"},{"name":"MWALE MOSES","number":"0980257872","province":"LUSAKA SOUTH","phone":"0980257872","shortCode":"493447"},{"name":"MOSES KATENDA","number":"0980212175","province":"LUSAKA SOUTH","phone":"0980212175","shortCode":"434050"},{"name":"DAVID CHANSA","number":"0981588383","province":"LUSAKA SOUTH","phone":"0981588383","shortCode":"435234"},{"name":"DERRICK NG'UNI","number":"0981784500","province":"LUSAKA SOUTH","phone":"0981784500","shortCode":"434508"},{"name":"SUZEN TEMBO","number":"0981609327","province":"LUSAKA SOUTH","phone":"0981609327","shortCode":"406503"},{"name":"INNOCENT MULENGA","number":"0981671750","province":"LUSAKA SOUTH","phone":"0981671750","shortCode":"402986"},{"name":"LUCKY MUSONI","number":"0981051944","province":"LUSAKA SOUTH","phone":"0981051944","shortCode":"0"}]},{"name":"Abel Mumba","number":"0981242804","dsas":[{"name":"RONALD SIMWANZA","number":"0980582773","province":"COPPERBELT","phone":"0980582773","shortCode":"409510"},{"name":"BWALYA SOSBERY","number":"0981366534","province":"COPPERBELT","phone":"0981366534","shortCode":"418639"}]},{"name":"Kalunga Ruth","number":"0980611119","dsas":[{"name":"REAGAN MUSHIBWE","number":"0980904765","province":"CENTRAL","phone":"0980904765","shortCode":"419163"},{"name":"ABIHSHY CHILANDA","number":"0980791061","province":"CENTRAL","phone":"0980791061","shortCode":"475132"},{"name":"STANLEY ZULU","number":"0981455675","province":"CENTRAL","phone":"0981455675","shortCode":"468641"},{"name":"MWENDA NALUMINO","number":"0980791222","province":"CENTRAL","phone":"0980791222","shortCode":"406353"},{"name":"RONARD MWENYA","number":"0980901170","province":"CENTRAL","phone":"0980901170","shortCode":"404510"},{"name":"BLESSINGS MWANZA","number":"0980392494","province":"CENTRAL","phone":"0980392494","shortCode":"454983"},{"name":"EMMAH PHIRI","number":"0980791191","province":"CENTRAL","phone":"0980791191","shortCode":"446743"},{"name":"MWALE BRIGHT","number":"0981292347","province":"CENTRAL","phone":"0981292347","shortCode":"402101"},{"name":"RHONICK MACHA","number":"0981537025","province":"CENTRAL","phone":"0981537025","shortCode":"406772"},{"name":"REAGAN C","number":"0981649042","province":"CENTRAL","phone":"0981649042","shortCode":"458903"},{"name":"DAVID KAONGA","number":"0981950051","province":"CENTRAL","phone":"0981950051","shortCode":"492462"},{"name":"ELENCY MWALBA","number":"0981788718","province":"CENTRAL","phone":"0981788718","shortCode":"431548"},{"name":"MISELO CHIMUKA","number":"0981810254","province":"CENTRAL","phone":"0981810254","shortCode":"426971"},{"name":"RAYMOND LUNGU","number":"0981911759","province":"CENTRAL","phone":"0981911759","shortCode":"425698"}]},{"name":"Alimasi amuri","number":"0980577377","dsas":[{"name":"ZHIKA PATRICK","number":"0980577778","province":"NORTH WEST","phone":"0980577778","shortCode":"447742"},{"name":"VICTOR KAUNDA","number":"0980492429","province":"NORTH WEST","phone":"0980492429","shortCode":"0"},{"name":"JUSTINE KOLOKO","number":"0980118838","province":"NORTH WEST","phone":"0980118838","shortCode":"462839"},{"name":"MICHEAL JOSEPH","number":"0981112251","province":"NORTH WEST","phone":"0981112251","shortCode":"454059"},{"name":"KASEKE KATONGO","number":"0980630941","province":"NORTH WEST","phone":"0980630941","shortCode":"464169"},{"name":"FORWARD SICHAAMBWA","number":"0980325257","province":"NORTH WEST","phone":"0980325257","shortCode":"429631"},{"name":"INNOCENT MUSHIPI","number":"0980464893","province":"NORTH WEST","phone":"0980464893","shortCode":"490483"},{"name":"PHILEMON KALASA","number":"0980118916","province":"NORTH WEST","phone":"0980118916","shortCode":"410465"},{"name":"CHRISTAS DAKA","number":"0981102020","province":"NORTH WEST","phone":"0981102020","shortCode":"442414"},{"name":"KYAKA BIBUSA","number":"0981269477","province":"NORTH WEST","phone":"0981269477","shortCode":"444106"},{"name":"KAYOMBO JAMES","number":"0981660202","province":"NORTH WEST","phone":"0981660202","shortCode":"478983"},{"name":"KUAMBA LOVENESS","number":"0981801185","province":"NORTH WEST","phone":"0981801185","shortCode":"488565"}]},{"name":"Worried kabunda","number":"0981209193","dsas":[{"name":"JOSEPHNDALIFI","number":"0980656502","province":"COPPERBELT","phone":"0980656502","shortCode":"442710"},{"name":"TEDDY SIACHAMATANGAI","number":"0981849089","province":"COPPERBELT","phone":"0981849089","shortCode":"0"}]},{"name":"Emmanuel nchima","number":"0980462604","dsas":[{"name":"EMMANUEL NCHIMA","number":"0981372147","province":"COPPERBELT","phone":"0981372147","shortCode":"418441"},{"name":"DEAN KAPASA","number":"0980868378","province":"COPPERBELT","phone":"0980868378","shortCode":"478293"},{"name":"RONALD MUSUNGA","number":"0980757729","province":"COPPERBELT","phone":"0980757729","shortCode":"486607"},{"name":"CHINGALA KAPASA","number":"0981165126","province":"COPPERBELT","phone":"0981165126","shortCode":"487824"},{"name":"PATRICK CHISANGA","number":"0980080036","province":"COPPERBELT","phone":"0980080036","shortCode":"488765"},{"name":"MWEWA MARK","number":"0981958478","province":"COPPERBELT","phone":"0981958478","shortCode":"424466"},{"name":"LINOS MUNSA","number":"0981600008","province":"COPPERBELT","phone":"0981600008","shortCode":"411468"}]},{"name":"Fredrick kangwa","number":"0980121219","dsas":[{"name":"CHOLA SHADRICK","number":"0980325240","province":"COPPERBELT","phone":"0980325240","shortCode":"479597"},{"name":"MULUSA JOSEPH","number":"0980325797","province":"COPPERBELT","phone":"0980325797","shortCode":"442254"},{"name":"MUTISA CALEB","number":"0980763167","province":"COPPERBELT","phone":"0980763167","shortCode":"421735"},{"name":"JUSTINE MAKANJINGA","number":"0980320244","province":"COPPERBELT","phone":"0980320244","shortCode":"447211"},{"name":"SAKA SHEILA","number":"0980121312","province":"COPPERBELT","phone":"0980121312","shortCode":"408108"},{"name":"BORNFACE BWALYA","number":"0980122263","province":"COPPERBELT","phone":"0980122263","shortCode":"497577"},{"name":"CHANDA GABRIEL","number":"0981150000","province":"COPPERBELT","phone":"0981150000","shortCode":"424755"},{"name":"MULENGA COSTEN","number":"0981048908","province":"COPPERBELT","phone":"0981048908","shortCode":"426412"},{"name":"MUSHILI BORNFACE","number":"0981794361","province":"COPPERBELT","phone":"0981794361","shortCode":"417200"},{"name":"MWABA BRIDGET","number":"0981578075","province":"COPPERBELT","phone":"0981578075","shortCode":"493900"},{"name":"ELISHA BWALYA","number":"0981831495","province":"COPPERBELT","phone":"0981831495","shortCode":"403630"}]},{"name":"Jane mwale","number":"0772780273","dsas":[{"name":"JORDAN SAKALA","number":"0980139812","province":"LUSAKA CENTRAL","phone":"0980139812","shortCode":"0"},{"name":"ALBERT SOKO","number":"0980049555","province":"LUSAKA CENTRAL","phone":"0980049555","shortCode":"464772"},{"name":"OLIVER MUNYUMBWE","number":"0980031760","province":"LUSAKA CENTRAL","phone":"0980031760","shortCode":"437668"},{"name":"SENATOR MAKUNGU","number":"0980071757","province":"LUSAKA CENTRAL","phone":"0980071757","shortCode":"459116"},{"name":"REAGAN CHANDA","number":"0980542288","province":"LUSAKA CENTRAL","phone":"0980542288","shortCode":"431910"},{"name":"JANE MWALE","number":"0981421882","province":"LUSAKA CENTRAL","phone":"0981421882","shortCode":"448207"},{"name":"JOSEPH CHIMWEMWE","number":"0981593463","province":"LUSAKA NORTH","phone":"0981593463","shortCode":"495032"},{"name":"CHARITY MWENYE","number":"0981781342","province":"LUSAKA CENTRAL","phone":"0981781342","shortCode":"457740"},{"name":"ESNART KABWE","number":"0981982207","province":"LUSAKA CENTRAL","phone":"0981982207","shortCode":"413614"}]},{"name":"KAZIMBAYA ELVIS","number":"0980582336","dsas":[{"name":"ERNEST CHISALA","number":"0980856267","province":"COPPERBELT","phone":"0980856267","shortCode":"431965"},{"name":"BENJAMIN MULENGA","number":"0980833700","province":"COPPERBELT","phone":"0980833700","shortCode":"464754"},{"name":"DANIEL CHEMBO","number":"0980764101","province":"COPPERBELT","phone":"0980764101","shortCode":"404808"},{"name":"EMMANUEL MULENGA","number":"0980875781","province":"COPPERBELT","phone":"0980875781","shortCode":"462836"},{"name":"BONAVENTURE MULENGA","number":"0980875609","province":"COPPERBELT","phone":"0980875609","shortCode":"455249"},{"name":"JUDY BANDA","number":"0980756659","province":"COPPERBELT","phone":"0980756659","shortCode":"492713"},{"name":"PROSPER GUMBO","number":"0980875796","province":"COPPERBELT","phone":"0980875796","shortCode":"417788"},{"name":"BWALYA BARBRA","number":"0980761046","province":"COPPERBELT","phone":"0980761046","shortCode":"440646"},{"name":"MEMORY NGANDWE","number":"0980816055","province":"COPPERBELT","phone":"0980816055","shortCode":"414556"},{"name":"MUSTAFA PHIRI","number":"0980819006","province":"COPPERBELT","phone":"0980819006","shortCode":"465152"},{"name":"MARTHA KAIMBA","number":"0980765695","province":"COPPERBELT","phone":"0980765695","shortCode":"461113"},{"name":"HENDERSON SICHINGA","number":"0981163836","province":"COPPERBELT","phone":"0981163836","shortCode":"413787"},{"name":"MWIKA VUUNDA","number":"0980824625","province":"COPPERBELT","phone":"0980824625","shortCode":"475932"},{"name":"BRIAN CHIFILE","number":"0981544976","province":"COPPERBELT","phone":"0981544976","shortCode":"432563"},{"name":"JOSEPH MUKUKA","number":"0981544519","province":"COPPERBELT","phone":"0981544519","shortCode":"455154"},{"name":"JANE CHIMFULE","number":"0981048982","province":"COPPERBELT","phone":"0981048982","shortCode":"440926"}]},{"name":"Kelvin chuula","number":"0981889199","dsas":[{"name":"THOMAS KABWE","number":"0980224590","province":"LUSAKA NORTH","phone":"0980224590","shortCode":"476293"},{"name":"DAKA JACKS","number":"0980529418","province":"LUSAKA NORTH","phone":"0980529418","shortCode":"403615"},{"name":"DENNIS MUNTHALI","number":"0980549364","province":"LUSAKA NORTH","phone":"0980549364","shortCode":"478931"},{"name":"JEPHITER KAPUTULA","number":"0981318104","province":"LUSAKA NORTH","phone":"0981318104","shortCode":"419088"},{"name":"DENNIS KOLALA","number":"0981684524","province":"LUSAKA NORTH","phone":"0981684524","shortCode":"417957"},{"name":"MICKSON CHISANGA","number":"0981682912","province":"LUSAKA NORTH","phone":"0981682912","shortCode":"448042"},{"name":"KATE MITIMINGI","number":"0981889299","province":"LUSAKA NORTH","phone":"0981889299","shortCode":"479276"},{"name":"MAURICE LUNGU","number":"0981919257","province":"LUSAKA NORTH","phone":"0981919257","shortCode":"487651"},{"name":"REGINA MWEEMBA","number":"0981433889","province":"LUSAKA NORTH","phone":"0981433889","shortCode":"448414"},{"name":"MUBALU NEWSTEADY","number":"0981875099","province":"LUSAKA NORTH","phone":"0981875099","shortCode":"484062"},{"name":"MOSES NJOBVU","number":"0981890189","province":"LUSAKA NORTH","phone":"0981890189","shortCode":"473659"},{"name":"IMANI NZOJIBWANI","number":"0980054882","province":"LUSAKA NORTH","phone":"0980054882","shortCode":"440474"}]},{"name":"BERNARD MKANDAWIRE","number":"0980013992","dsas":[{"name":"SAIDI MBEWE","number":"0981311441","province":"LUSAKA NORTH","phone":"0981311441","shortCode":"421230"},{"name":"CONVERT NG'ANDU","number":"0980011732","province":"LUSAKA CENTRAL","phone":"0980011732","shortCode":"451755"},{"name":"FIELD NYENDWA","number":"0980055103","province":"LUSAKA NORTH","phone":"0980055103","shortCode":"402827"},{"name":"EMMANUEL KALOLO","number":"0980332199","province":"LUSAKA NORTH","phone":"0980332199","shortCode":"455758"},{"name":"OWEN KATOKA","number":"0980061144","province":"LUSAKA NORTH","phone":"0980061144","shortCode":"451545"},{"name":"ROBERT MBEWE","number":"0980282026","province":"LUSAKA NORTH","phone":"0980282026","shortCode":"462883"},{"name":"BOYD CHANDA","number":"0981404050","province":"LUSAKA NORTH","phone":"0981404050","shortCode":"452206"},{"name":"MARY BANDA","number":"0980055155","province":"LUSAKA NORTH","phone":"0980055155","shortCode":"414102"},{"name":"TECKSON PHIRI","number":"0981604690","province":"LUSAKA NORTH","phone":"0981604690","shortCode":"420429"},{"name":"AGAPE MULOONGO","number":"0981511174","province":"LUSAKA NORTH","phone":"0981511174","shortCode":"439744"},{"name":"ROBINSON MABO","number":"0980093800","province":"LUSAKA NORTH","phone":"0980093800","shortCode":"438921"},{"name":"SHADRICK SIMWANZA","number":"0980734848","province":"LUSAKA NORTH","phone":"0980734848","shortCode":"482242"},{"name":"TIMOTHY KALEMBENI","number":"0981616299","province":"LUSAKA NORTH","phone":"0981616299","shortCode":"443528"},{"name":"GERSHOM SUMBLELO","number":"0981530000","province":"LUSAKA NORTH","phone":"0981530000","shortCode":"460161"},{"name":"CLARA MUSONDA","number":"0981989874","province":"LUSAKA NORTH","phone":"0981989874","shortCode":"401677"},{"name":"NATHAN PHIRI","number":"0981556853","province":"LUSAKA NORTH","phone":"0981556853","shortCode":"485076"},{"name":"MISHECK MUNYUMBWE","number":"0981603031","province":"LUSAKA NORTH","phone":"0981603031","shortCode":"416790"},{"name":"CLARA KAPENDA","number":"0980540016","province":"LUSAKA NORTH","phone":"0980540016","shortCode":"409041"},{"name":"MARY MKANDAWIRE","number":"0980388888","province":"LUSAKA NORTH","phone":"0980388888","shortCode":"487511"}]},{"name":"Dumisani Mumba","number":"0981056161","dsas":[{"name":"VINCENT SILAVWE","number":"0980277395","province":"LUSAKA CENTRAL","phone":"0980277395","shortCode":"435911"},{"name":"MAYBIN MAAMBO","number":"0980436708","province":"LUSAKA CENTRAL","phone":"0980436708","shortCode":"450272"},{"name":"KANJUWE GENERAL","number":"0980022128","province":"LUSAKA CENTRAL","phone":"0980022128","shortCode":"409542"},{"name":"HOSEA ZIBA","number":"0980268140","province":"LUSAKA CENTRAL","phone":"0980268140","shortCode":"479303"},{"name":"NEPHAT NKHOMA","number":"0981434955","province":"LUSAKA CENTRAL","phone":"0981434955","shortCode":"493650"},{"name":"ELIAS BANDA","number":"0981787066","province":"LUSAKA CENTRAL","phone":"0981787066","shortCode":"468687"},{"name":"NATASHA MWANANSHIKU","number":"0981681767","province":"LUSAKA CENTRAL","phone":"0981681767","shortCode":"438520"}]},{"name":"Brian mvula","number":"0981256262","dsas":[{"name":"JAILOS BANDA","number":"0980643388","province":"LUSAKA NORTH","phone":"0980643388","shortCode":"471416"},{"name":"DORCUS MULWANDA","number":"0981160965","province":"LUSAKA NORTH","phone":"0981160965","shortCode":"439160"},{"name":"KATONGO KANGALE","number":"0980288837","province":"LUSAKA NORTH","phone":"0980288837","shortCode":"469583"},{"name":"SIMUYEMBA LASTON","number":"0980074637","province":"LUSAKA NORTH","phone":"0980074637","shortCode":"480578"},{"name":"GABRIEL TEMBO","number":"0980390844","province":"LUSAKA NORTH","phone":"0980390844","shortCode":"495333"},{"name":"DABWISO SAKALA","number":"0980027273","province":"LUSAKA SOUTH","phone":"0980027273","shortCode":"491915"},{"name":"KASONGO FRED","number":"0980146993","province":"LUSAKA NORTH","phone":"0980146993","shortCode":"474941"},{"name":"CATHERINE PHIRI","number":"0981477006","province":"LUSAKA NORTH","phone":"0981477006","shortCode":"495083"},{"name":"SIMUYEMBA HUMPHREY","number":"0981806721","province":"LUSAKA NORTH","phone":"0981806721","shortCode":"442696"},{"name":"JOHN MWANZA","number":"0980066116","province":"LUSAKA CENTRAL","phone":"0980066116","shortCode":"424513"},{"name":"PETER SAKALA","number":"0981448205","province":"LUSAKA NORTH","phone":"0981448205","shortCode":"494889"},{"name":"VECTOR KAPASA","number":"0981862117","province":"LUSAKA NORTH","phone":"0981862117","shortCode":"439304"}]},{"name":"Elias ngoma","number":"0981231092","dsas":[{"name":"THOMAS MUKOSHA","number":"0980018899","province":"LUSAKA NORTH","phone":"0980018899","shortCode":"422402"},{"name":"PHILLY MWIINGA","number":"0980095059","province":"LUSAKA NORTH","phone":"0980095059","shortCode":"410389"},{"name":"EDSON MWANZA","number":"0980726151","province":"LUSAKA NORTH","phone":"0980726151","shortCode":"407834"},{"name":"CHANDA ABRAHAM","number":"0981312271","province":"LUSAKA NORTH","phone":"0981312271","shortCode":"447751"},{"name":"CHARLES PHIRI","number":"0981441389","province":"LUSAKA NORTH","phone":"0981441389","shortCode":"442166"},{"name":"ONLY MUNSAKA","number":"0980093794","province":"LUSAKA NORTH","phone":"0980093794","shortCode":"469438"},{"name":"MUFALALI MAIMBOLWA","number":"0980055120","province":"LUSAKA NORTH","phone":"0980055120","shortCode":"489458"},{"name":"SAKALA ISAAC","number":"0980130964","province":"LUSAKA NORTH","phone":"0980130964","shortCode":"480353"},{"name":"KUNDA FLORENCE","number":"0981918166","province":"LUSAKA NORTH","phone":"0981918166","shortCode":"452608"},{"name":"MICHELLE CHUNGU","number":"0981544775","province":"LUSAKA NORTH","phone":"0981544775","shortCode":"418491"},{"name":"CHARLES JERE","number":"0981317395","province":"LUSAKA NORTH","phone":"0981317395","shortCode":"464924"},{"name":"NASON CHIBANGU","number":"0980061924","province":"LUSAKA NORTH","phone":"0980061924","shortCode":"426915"},{"name":"KAUNDA CLEOPAS","number":"0981159006","province":"LUSAKA NORTH","phone":"0981159006","shortCode":"480280"},{"name":"KAUMBA KAMBANJA","number":"0980106059","province":"LUSAKA NORTH","phone":"0980106059","shortCode":"400259"},{"name":"ISAAC TEMBO","number":"0981764764","province":"LUSAKA NORTH","phone":"0981764764","shortCode":"473600"},{"name":"ROBSON MOOMBE","number":"0981043223","province":"LUSAKA NORTH","phone":"0981043223","shortCode":"493348"},{"name":"MWENDA LUBINDA","number":"0981044143","province":"LUSAKA NORTH","phone":"0981044143","shortCode":"489678"},{"name":"YEMBE BANDA","number":"0981787989","province":"LUSAKA NORTH","phone":"0981787989","shortCode":"441422"},{"name":"JOSHUA CHIKUWE","number":"0981828863","province":"LUSAKA NORTH","phone":"0981828863","shortCode":"430195"}]},{"name":"Chomba Erick","number":"0981010999","dsas":[{"name":"SYDNEY KANGWA","number":"0981125444","province":"LUSAKA SOUTH","phone":"0981125444","shortCode":"494893"},{"name":"JOSEPH CHILUFWA","number":"0981853263","province":"LUSAKA SOUTH","phone":"0981853263","shortCode":"466936"},{"name":"KENNEDY MVULA","number":"0980133302","province":"LUSAKA SOUTH","phone":"0980133302","shortCode":"438475"},{"name":"SAMUEL MUYUNDA","number":"0981950989","province":"LUSAKA SOUTH","phone":"0981950989","shortCode":"464180"}]},{"name":"INNOCENT MPANGA","number":"0980563000","dsas":[{"name":"STEPHEN BANDA","number":"0980568755","province":"SOUTHERN","phone":"0980568755","shortCode":"414315"},{"name":"JUSTIN MUCHANGA","number":"0980266600","province":"LUSAKA SOUTH","phone":"0980266600","shortCode":"485752"},{"name":"EMMA MALANDA","number":"0981377477","province":"SOUTHERN","phone":"0981377477","shortCode":"408196"},{"name":"LIVINGSTONE FISH","number":"0981800066","province":"SOUTHERN","phone":"0981800066","shortCode":"402407"},{"name":"DAVID MUMBI","number":"0981564000","province":"SOUTHERN","phone":"0981564000","shortCode":"476682"}]},{"name":"Jabulani simuchembu","number":"0980653400","dsas":[{"name":"WALUBITA SIMENDA","number":"0980020001","province":"LUSAKA SOUTH","phone":"0980020001","shortCode":"496105"},{"name":"MAYBIN MUTENGO","number":"0981183732","province":"LUSAKA SOUTH","phone":"0981183732","shortCode":"415738"},{"name":"CHINYAMA CHINYAMA","number":"0980129340","province":"LUSAKA SOUTH","phone":"0980129340","shortCode":"494190"},{"name":"ELIJAH LUKULA","number":"0980151451","province":"LUSAKA SOUTH","phone":"0980151451","shortCode":"462173"},{"name":"HAGGAI LIYANDA","number":"0980030255","province":"LUSAKA SOUTH","phone":"0980030255","shortCode":"408097"},{"name":"PROSPER MWENYA","number":"0980029111","province":"LUSAKA SOUTH","phone":"0980029111","shortCode":"480533"},{"name":"SHAHEED BANDA","number":"0980479110","province":"LUSAKA SOUTH","phone":"0980479110","shortCode":"479858"},{"name":"FRANCIS KAPALANGWE","number":"0980072183","province":"LUSAKA SOUTH","phone":"0980072183","shortCode":"405569"},{"name":"VICTOR NASILELE","number":"0980129285","province":"LUSAKA SOUTH","phone":"0980129285","shortCode":"418385"},{"name":"MISHECK MANDANJI","number":"0981894442","province":"LUSAKA SOUTH","phone":"0981894442","shortCode":"460685"},{"name":"KISCOH SIAMVULA","number":"0980651651","province":"LUSAKA SOUTH","phone":"0980651651","shortCode":"470541"},{"name":"DAVISON KANENGA","number":"0981866613","province":"LUSAKA SOUTH","phone":"0981866613","shortCode":"431103"},{"name":"TISSAH BWANGA","number":"0981034127","province":"LUSAKA SOUTH","phone":"0981034127","shortCode":"447062"},{"name":"DORICA CHABALA","number":"0981637353","province":"LUSAKA SOUTH","phone":"0981637353","shortCode":"498210"},{"name":"ELIJOHN CHITAMBALA","number":"0981580451","province":"LUSAKA SOUTH","phone":"0981580451","shortCode":"478629"},{"name":"MAZUBA SUVENA","number":"0981788576","province":"LUSAKA SOUTH","phone":"0981788576","shortCode":"409101"}]},{"name":"Given kailu","number":"0980655006","dsas":[{"name":"LUCKSON MVULA","number":"0980026348","province":"LUSAKA SOUTH","phone":"0980026348","shortCode":"417343"},{"name":"MORGAN MASHILA","number":"0980015520","province":"LUSAKA CENTRAL","phone":"0980015520","shortCode":"419695"},{"name":"LIGHTWELL MULENGA","number":"0980030944","province":"LUSAKA SOUTH","phone":"0980030944","shortCode":"415798"},{"name":"CHARLES MVULA","number":"0980309414","province":"LUSAKA SOUTH","phone":"0980309414","shortCode":"461341"},{"name":"NDASHE MAYENDA","number":"0980025818","province":"LUSAKA SOUTH","phone":"0980025818","shortCode":"467391"},{"name":"CHRISTOPHER KALUBA","number":"0980183131","province":"LUSAKA SOUTH","phone":"0980183131","shortCode":"413943"},{"name":"RICHARD CHISANGA","number":"0980013929","province":"LUSAKA SOUTH","phone":"0980013929","shortCode":"434744"},{"name":"MIKE NJOBVU","number":"0980693200","province":"LUSAKA SOUTH","phone":"0980693200","shortCode":"450047"},{"name":"MERVIS ZULU","number":"0980251395","province":"LUSAKA SOUTH","phone":"0980251395","shortCode":"495335"},{"name":"SAVIOUR CHISHIMBA","number":"0980381479","province":"LUSAKA SOUTH","phone":"0980381479","shortCode":"440371"},{"name":"OBERT MUNSANJE","number":"0980026344","province":"LUSAKA SOUTH","phone":"0980026344","shortCode":"439136"},{"name":"MOMEDY MUSONDA","number":"0980030941","province":"LUSAKA SOUTH","phone":"0980030941","shortCode":"491926"},{"name":"FRANCIS MUMBA","number":"0980029363","province":"LUSAKA SOUTH","phone":"0980029363","shortCode":"409744"},{"name":"JOSEPH CHANDA","number":"0981519650","province":"LUSAKA SOUTH","phone":"0981519650","shortCode":"444037"},{"name":"JOHN MOZAYA","number":"0981495363","province":"LUSAKA SOUTH","phone":"0981495363","shortCode":"411621"},{"name":"CHRISTOPHER MAZIBA","number":"0981915288","province":"LUSAKA SOUTH","phone":"0981915288","shortCode":"470041"},{"name":"ROBERT CHOLA","number":"0981683698","province":"LUSAKA SOUTH","phone":"0981683698","shortCode":"457827"},{"name":"LEWIS KABWE","number":"0981854001","province":"LUSAKA SOUTH","phone":"0981854001","shortCode":"420342"},{"name":"SYDNEY NYATHI","number":"0981828236","province":"LUSAKA SOUTH","phone":"0981828236","shortCode":"414820"},{"name":"CHANDA MUKUKA","number":"0981760485","province":"LUSAKA SOUTH","phone":"0981760485","shortCode":"451481"},{"name":"THERESA CHISHA","number":"0981778480","province":"LUSAKA SOUTH","phone":"0981778480","shortCode":"442873"}]},{"name":"Prince chansa","number":"0980796247","dsas":[{"name":"KINGSTONE NUMWA","number":"0980900386","province":"CENTRAL","phone":"0980900386","shortCode":"461697"},{"name":"ALPHAN SHITUTA","number":"0980898969","province":"CENTRAL","phone":"0980898969","shortCode":"407715"},{"name":"KEEGAN KALWEMBE","number":"0980898899","province":"CENTRAL","phone":"0980898899","shortCode":"487851"},{"name":"MWENDOI AKAKANDELWA","number":"0980982999","province":"CENTRAL","phone":"0980982999","shortCode":"435029"},{"name":"DANNY JUNIOR","number":"0980891020","province":"CENTRAL","phone":"0980891020","shortCode":"426369"},{"name":"GRENADA CHOOBA","number":"0980898906","province":"CENTRAL","phone":"0980898906","shortCode":"478420"},{"name":"CHIMAMA CHIMAMA","number":"0980898522","province":"CENTRAL","phone":"0980898522","shortCode":"400165"},{"name":"ENERST NTAMBWE","number":"0981182026","province":"CENTRAL","phone":"0981182026","shortCode":"493681"},{"name":"ANDREW TEMBO","number":"0980899405","province":"CENTRAL","phone":"0980899405","shortCode":"435702"},{"name":"JOHN BANDA","number":"0981183282","province":"LUSAKA SOUTH","phone":"0981183282","shortCode":"491682"},{"name":"LUCKY MWEEMBA","number":"0981182115","province":"CENTRAL","phone":"0981182115","shortCode":"498481"},{"name":"MUNDIA INAMBAO","number":"0980898545","province":"CENTRAL","phone":"0980898545","shortCode":"478258"},{"name":"DORCAS KAPATA","number":"0981050041","province":"CENTRAL","phone":"0981050041","shortCode":"426931"},{"name":"FRIDAH SAYI","number":"0981957524","province":"CENTRAL","phone":"0981957524","shortCode":"484046"},{"name":"MWAULUKA DAVID","number":"0980897003","province":"CENTRAL","phone":"0980897003","shortCode":"402062"}]},{"name":"Florence","number":"0980024696","dsas":[{"name":"ZIMBA MATEYO","number":"0980038390","province":"LUSAKA SOUTH","phone":"0980038390","shortCode":"442865"},{"name":"GEOFFREY MINGANJA","number":"0980012453","province":"LUSAKA SOUTH","phone":"0980012453","shortCode":"446524"},{"name":"MILIMO CHEELO","number":"0980414505","province":"LUSAKA SOUTH","phone":"0980414505","shortCode":"447391"},{"name":"NATASHA KHUMALO","number":"0980030970","province":"LUSAKA SOUTH","phone":"0980030970","shortCode":"418185"},{"name":"NJANJI MOFFAT","number":"0981675180","province":"LUSAKA SOUTH","phone":"0981675180","shortCode":"428833"},{"name":"RACHEAL KAZIYA","number":"0981051324","province":"LUSAKA SOUTH","phone":"0981051324","shortCode":"421450"},{"name":"CHARLES TEMBO","number":"0981988789","province":"LUSAKA NORTH","phone":"0981988789","shortCode":"466609"},{"name":"MATHEWS MUTAMBO","number":"0981559583","province":"LUSAKA SOUTH","phone":"0981559583","shortCode":"435188"},{"name":"CHAMA MUKONDE","number":"0981729920","province":"LUSAKA SOUTH","phone":"0981729920","shortCode":"448653"},{"name":"ABIGAIL CHISANGA","number":"0981750054","province":"LUSAKA SOUTH","phone":"0981750054","shortCode":"483946"},{"name":"SINKAMBA ARTHUR","number":"0980197668","province":"LUSAKA SOUTH","phone":"0980197668","shortCode":"456098"}]},{"name":"Christopher Musonda","number":"0980049999","dsas":[{"name":"COLLINARD MWAMBA","number":"0980739222","province":"LUSAKA CENTRAL","phone":"0980739222","shortCode":"435891"},{"name":"KOLONA PHIRI","number":"0980149103","province":"LUSAKA CENTRAL","phone":"0980149103","shortCode":"430243"},{"name":"GABRIEL SAILI","number":"0980072772","province":"LUSAKA CENTRAL","phone":"0980072772","shortCode":"416279"},{"name":"SAMUEL BANDA","number":"0980189464","province":"LUSAKA CENTRAL","phone":"0980189464","shortCode":"445169"},{"name":"KELLY SICHIMBA","number":"0980113134","province":"LUSAKA CENTRAL","phone":"0980113134","shortCode":"426828"},{"name":"MWANZA DERIS","number":"0980044546","province":"LUSAKA CENTRAL","phone":"0980044546","shortCode":"413631"},{"name":"JUSTINE SAKALA","number":"0980133235","province":"LUSAKA CENTRAL","phone":"0980133235","shortCode":"403881"},{"name":"FELIX CHIWANDA","number":"0980218949","province":"LUSAKA CENTRAL","phone":"0980218949","shortCode":"457251"},{"name":"KINGSLEY MUKULULE","number":"0980139439","province":"LUSAKA CENTRAL","phone":"0980139439","shortCode":"445064"},{"name":"CLEMENTINA NANJIWAO","number":"0980020585","province":"LUSAKA CENTRAL","phone":"0980020585","shortCode":"423340"},{"name":"CHRIS MULENGA","number":"0980268054","province":"LUSAKA CENTRAL","phone":"0980268054","shortCode":"417442"},{"name":"WILLIAM PHIRI","number":"0980013232","province":"LUSAKA CENTRAL","phone":"0980013232","shortCode":"484283"},{"name":"LAWRENCE MWANZA","number":"0980106999","province":"LUSAKA CENTRAL","phone":"0980106999","shortCode":"461855"},{"name":"ANTHONY LAMBWE","number":"0980438653","province":"LUSAKA CENTRAL","phone":"0980438653","shortCode":"490891"},{"name":"CHRISTOPHER MULENGA","number":"0981599513","province":"LUSAKA CENTRAL","phone":"0981599513","shortCode":"420922"},{"name":"MICAIAH MWANZA","number":"0981964492","province":"LUSAKA CENTRAL","phone":"0981964492","shortCode":"490859"},{"name":"RUTH MULENGA","number":"0981666039","province":"LUSAKA CENTRAL","phone":"0981666039","shortCode":"425968"},{"name":"PATRICIA KABUSWE","number":"0981437824","province":"LUSAKA CENTRAL","phone":"0981437824","shortCode":"471821"},{"name":"ESTHER LUPOBE","number":"0981652920","province":"LUSAKA CENTRAL","phone":"0981652920","shortCode":"433126"},{"name":"JUSTIN CHILESHE","number":"0981642682","province":"LUSAKA CENTRAL","phone":"0981642682","shortCode":"436940"},{"name":"JOSEPH KITAMBALA","number":"0981913927","province":"LUSAKA CENTRAL","phone":"0981913927","shortCode":"444781"},{"name":"BERNARD MASHINDA","number":"0981689958","province":"LUSAKA CENTRAL","phone":"0981689958","shortCode":"440531"}]},{"name":"Prince Nankambula","number":"0981132370","dsas":[{"name":"JOSEPH MULENGA","number":"0980620043","province":"CENTRAL","phone":"0980620043","shortCode":"498870"},{"name":"FRANCIS KAYAYA","number":"0980977317","province":"CENTRAL","phone":"0980977317","shortCode":"486633"},{"name":"SAMSON NAMWAZE","number":"0980288461","province":"CENTRAL","phone":"0980288461","shortCode":"425338"},{"name":"KUNDA CHANGANI","number":"0981760413","province":"CENTRAL","phone":"0981760413","shortCode":"422382"}]},{"name":"Elizabeth phiri","number":"0980013912","dsas":[{"name":"MULO L","number":"0981711177","province":"LUSAKA NORTH","phone":"0981711177","shortCode":"422596"},{"name":"GRACE LUNGU","number":"0980051222","province":"LUSAKA NORTH","phone":"0980051222","shortCode":"403176"},{"name":"BRIDGET MWAPE","number":"0980063655","province":"LUSAKA NORTH","phone":"0980063655","shortCode":"422476"},{"name":"BENSON NDUBWE","number":"0980019112","province":"LUSAKA NORTH","phone":"0980019112","shortCode":"492970"},{"name":"MIKE CHIPASHA","number":"0981151300","province":"LUSAKA NORTH","phone":"0981151300","shortCode":"424327"},{"name":"TEMBO JONATHAN","number":"0980017909","province":"LUSAKA NORTH","phone":"0980017909","shortCode":"417304"},{"name":"FRANK KAYUMA","number":"0980018103","province":"LUSAKA CENTRAL","phone":"0980018103","shortCode":"400819"},{"name":"ASTON MAMBWE","number":"0981617979","province":"LUSAKA NORTH","phone":"0981617979","shortCode":"495063"},{"name":"NAMAKAU MUNAKABAYO","number":"0980132119","province":"LUSAKA NORTH","phone":"0980132119","shortCode":"454379"},{"name":"BENJAMIN NYIRENDA","number":"0980060155","province":"LUSAKA NORTH","phone":"0980060155","shortCode":"436104"},{"name":"MWAMBA MUSONDA","number":"0980444666","province":"LUSAKA NORTH","phone":"0980444666","shortCode":"448406"},{"name":"NATASHA NATA","number":"0980060122","province":"LUSAKA NORTH","phone":"0980060122","shortCode":"441446"},{"name":"THABO BENJAMIN","number":"0981026125","province":"LUSAKA NORTH","phone":"0981026125","shortCode":"426674"},{"name":"GERTRUDE SAKALA","number":"0981526464","province":"LUSAKA NORTH","phone":"0981526464","shortCode":"491578"},{"name":"DAVID MOOKOLA","number":"0981526337","province":"LUSAKA NORTH","phone":"0981526337","shortCode":"451371"},{"name":"MARTHA NDANGILWA","number":"0981988342","province":"LUSAKA NORTH","phone":"0981988342","shortCode":"427207"},{"name":"CHRISPIN NONDE","number":"0981685658","province":"LUSAKA NORTH","phone":"0981685658","shortCode":"401902"},{"name":"EMMANUEL NYIRENDA","number":"0981975465","province":"LUSAKA NORTH","phone":"0981975465","shortCode":"426356"},{"name":"EMMANUEL CHISANGA","number":"0981049444","province":"LUSAKA NORTH","phone":"0981049444","shortCode":"468224"},{"name":"TEHILLAH MUMBA","number":"0981822181","province":"LUSAKA NORTH","phone":"0981822181","shortCode":"411222"}]},{"name":"Eunice Mbewe","number":"0980018764","dsas":[{"name":"ILUNGA NORAH","number":"0980360189","province":"LUSAKA CENTRAL","phone":"0980360189","shortCode":"429013"},{"name":"AABEL MWELWA","number":"0980073284","province":"LUSAKA CENTRAL","phone":"0980073284","shortCode":"466726"},{"name":"CARED MUNSHYA","number":"0980097494","province":"LUSAKA CENTRAL","phone":"0980097494","shortCode":"471796"},{"name":"EDWARD MULENGA","number":"0980038066","province":"LUSAKA SOUTH","phone":"0980038066","shortCode":"450937"},{"name":"JULIUS ZIMBA","number":"0980206499","province":"LUSAKA CENTRAL","phone":"0980206499","shortCode":"490753"},{"name":"ADRIAN HAMATENDE","number":"0980043737","province":"LUSAKA CENTRAL","phone":"0980043737","shortCode":"421305"},{"name":"GUZE AARON","number":"0980045222","province":"LUSAKA CENTRAL","phone":"0980045222","shortCode":"431301"},{"name":"PHANWELL MUTALE","number":"0980088080","province":"LUSAKA SOUTH","phone":"0980088080","shortCode":"470957"},{"name":"MIKE MAKELA","number":"0980020047","province":"LUSAKA SOUTH","phone":"0980020047","shortCode":"458225"},{"name":"LENARD CHALELA","number":"0980034480","province":"LUSAKA CENTRAL","phone":"0980034480","shortCode":"439539"},{"name":"PHALON","number":"0980045444","province":"LUSAKA CENTRAL","phone":"0980045444","shortCode":"407001"},{"name":"MAJORIE MUTEMBA","number":"0980034455","province":"LUSAKA CENTRAL","phone":"0980034455","shortCode":"480925"},{"name":"KINGSLEY KAPOTWE","number":"0980888708","province":"LUSAKA CENTRAL","phone":"0980888708","shortCode":"434329"},{"name":"JOHN KATEBE","number":"0980034450","province":"LUSAKA CENTRAL","phone":"0980034450","shortCode":"410147"},{"name":"PAUL BANDA","number":"0980038441","province":"LUSAKA CENTRAL","phone":"0980038441","shortCode":"436788"},{"name":"CHIBUYE CHIBWE","number":"0980610984","province":"LUSAKA CENTRAL","phone":"0980610984","shortCode":"428791"},{"name":"MARTIN KANGWA","number":"0980043952","province":"LUSAKA CENTRAL","phone":"0980043952","shortCode":"438874"},{"name":"ISAAC ZULU","number":"0981555491","province":"LUSAKA CENTRAL","phone":"0981555491","shortCode":"418699"},{"name":"YVONNE SANGULUBE","number":"0981658119","province":"LUSAKA CENTRAL","phone":"0981658119","shortCode":"479399"},{"name":"BRIDGET CHOLA","number":"0981789078","province":"LUSAKA CENTRAL","phone":"0981789078","shortCode":"455377"}]},{"name":"MORRIS KALALUKA","number":"0981350020","dsas":[{"name":"TRYNESS NZANGA","number":"0980206760","province":"LUSAKA SOUTH","phone":"0980206760","shortCode":"414264"},{"name":"KELVIN MWIINGA","number":"0980038624","province":"LUSAKA SOUTH","phone":"0980038624","shortCode":"419894"},{"name":"WAKISHALE KETTY","number":"0981326999","province":"LUSAKA SOUTH","phone":"0981326999","shortCode":"492835"},{"name":"PETER CHILELE","number":"0980282415","province":"LUSAKA SOUTH","phone":"0980282415","shortCode":"497091"},{"name":"MERCY CHILALA","number":"0980245920","province":"LUSAKA SOUTH","phone":"0980245920","shortCode":"412740"},{"name":"SITALI MWIYA","number":"0980347206","province":"LUSAKA SOUTH","phone":"0980347206","shortCode":"435878"},{"name":"KABWE STEPHEN","number":"0980127849","province":"LUSAKA SOUTH","phone":"0980127849","shortCode":"487660"},{"name":"CHARLES KAPAPILO","number":"0980038356","province":"LUSAKA SOUTH","phone":"0980038356","shortCode":"484288"},{"name":"GILBERT LUNGU","number":"0980330240","province":"LUSAKA CENTRAL","phone":"0980330240","shortCode":"459453"},{"name":"GANIZANI MITI","number":"0980100900","province":"LUSAKA SOUTH","phone":"0980100900","shortCode":"414367"},{"name":"KENNEDY MANYAMBE","number":"0981493436","province":"LUSAKA SOUTH","phone":"0981493436","shortCode":"445795"},{"name":"SAMPA GREGORY","number":"0980330909","province":"LUSAKA SOUTH","phone":"0980330909","shortCode":"401616"},{"name":"WALUBITA MUKELABAI","number":"0980238005","province":"LUSAKA SOUTH","phone":"0980238005","shortCode":"469745"},{"name":"ILENT KABAMBA","number":"0980307292","province":"LUSAKA SOUTH","phone":"0980307292","shortCode":"426033"},{"name":"RICO MWEEMBA","number":"0980898275","province":"LUSAKA SOUTH","phone":"0980898275","shortCode":"453529"},{"name":"FRED MWEMBA","number":"0981350105","province":"LUSAKA SOUTH","phone":"0981350105","shortCode":"496369"},{"name":"BAZILITA MWALE","number":"0981767975","province":"LUSAKA SOUTH","phone":"0981767975","shortCode":"453835"},{"name":"SOMBO NDUMBA","number":"0981780333","province":"LUSAKA SOUTH","phone":"0981780333","shortCode":"451933"},{"name":"MWALE LAMECK","number":"0981611588","province":"LUSAKA SOUTH","phone":"0981611588","shortCode":"431856"}]},{"name":"VINCENT KALUMBA","number":"0980126138","dsas":[{"name":"JERRY BWEMBYA","number":"0980175039","province":"LUSAKA SOUTH","phone":"0980175039","shortCode":"456956"},{"name":"DONALD MBEWE","number":"0981079929","province":"LUSAKA SOUTH","phone":"0981079929","shortCode":"421397"},{"name":"MWEETWA TARVENAR","number":"0981080104","province":"LUSAKA SOUTH","phone":"0981080104","shortCode":"417960"},{"name":"DAVY KANDAMA","number":"0981326633","province":"LUSAKA SOUTH","phone":"0981326633","shortCode":"409969"},{"name":"THOMAS SIAMALICHA","number":"0981334755","province":"LUSAKA SOUTH","phone":"0981334755","shortCode":"490588"},{"name":"IDENTY JAMBA","number":"0981334322","province":"LUSAKA SOUTH","phone":"0981334322","shortCode":"405858"},{"name":"LAWRENCE DANIEL","number":"0981490444","province":"LUSAKA SOUTH","phone":"0981490444","shortCode":"415122"},{"name":"ENOCK SYSTEM","number":"0980407755","province":"LUSAKA SOUTH","phone":"0980407755","shortCode":"440272"},{"name":"KELLIES SIMUTOWE","number":"0981775353","province":"LUSAKA SOUTH","phone":"0981775353","shortCode":"454944"},{"name":"LAMECK LIKANDO","number":"0981657314","province":"LUSAKA SOUTH","phone":"0981657314","shortCode":"459117"},{"name":"MOSES CHALO","number":"0980874130","province":"LUSAKA SOUTH","phone":"0980874130","shortCode":"429028"},{"name":"JAMES PHIRI","number":"0981677788","province":"LUSAKA SOUTH","phone":"0981677788","shortCode":"499270"},{"name":"MORGAN MWAALA","number":"0981558500","province":"LUSAKA SOUTH","phone":"0981558500","shortCode":"465371"}]},{"name":"Trust Muzumba","number":"0980255522","dsas":[{"name":"FRANCIS MUMA","number":"0981345013","province":"LUSAKA SOUTH","phone":"0981345013","shortCode":"438820"},{"name":"MWIINGA KING","number":"0980155726","province":"LUSAKA SOUTH","phone":"0980155726","shortCode":"442214"},{"name":"SIANGUNI OSCAR","number":"0981345400","province":"LUSAKA SOUTH","phone":"0981345400","shortCode":"401591"},{"name":"IMAKANDO KALABO","number":"0980029455","province":"LUSAKA SOUTH","phone":"0980029455","shortCode":"405351"},{"name":"ESNART KALUSA","number":"0980151576","province":"LUSAKA SOUTH","phone":"0980151576","shortCode":"404626"},{"name":"CHILAMBE CHRISTOPHER","number":"0980142425","province":"LUSAKA SOUTH","phone":"0980142425","shortCode":"483957"},{"name":"JOSEPH SICHONE","number":"0980022830","province":"LUSAKA SOUTH","phone":"0980022830","shortCode":"438968"},{"name":"BORNFACE KAYAWE","number":"0980611868","province":"LUSAKA SOUTH","phone":"0980611868","shortCode":"465352"},{"name":"SYLVIA LWEELE","number":"0980214908","province":"LUSAKA SOUTH","phone":"0980214908","shortCode":"423479"},{"name":"MUTINTA KABIMBA","number":"0980126791","province":"LUSAKA SOUTH","phone":"0980126791","shortCode":"466434"},{"name":"HONEST CHIZELA","number":"0980100000","province":"LUSAKA SOUTH","phone":"0980100000","shortCode":"488844"},{"name":"CAROLINE MALAMBO","number":"0980798785","province":"LUSAKA SOUTH","phone":"0980798785","shortCode":"435854"},{"name":"CHRISTOPHER MUSONDA","number":"0981499399","province":"LUSAKA SOUTH","phone":"0981499399","shortCode":"481715"},{"name":"STELLA HABONGOLA","number":"0981649256","province":"LUSAKA SOUTH","phone":"0981649256","shortCode":"417158"}]},{"name":"SONFORD HABEENZU","number":"0980038707","dsas":[{"name":"CHITI LUCKY","number":"0980812171","province":"CENTRAL","phone":"0980812171","shortCode":"456905"},{"name":"SIANDUNDA WEBBY","number":"0980697446","province":"CENTRAL","phone":"0980697446","shortCode":"456873"},{"name":"JULIE'S TANGUNA","number":"0980905343","province":"CENTRAL","phone":"0980905343","shortCode":"460127"},{"name":"MULENGA PEARSON","number":"0980697258","province":"CENTRAL","phone":"0980697258","shortCode":"463718"},{"name":"MWANSA TREVOURS","number":"0980721804","province":"CENTRAL","phone":"0980721804","shortCode":"434549"},{"name":"KENNEDY CHIMANGA","number":"0980537330","province":"CENTRAL","phone":"0980537330","shortCode":"413576"},{"name":"MUPETA WESTONE","number":"0981281830","province":"CENTRAL","phone":"0981281830","shortCode":"443066"},{"name":"NKOSI LONJEZANI","number":"0980697223","province":"CENTRAL","phone":"0980697223","shortCode":"459898"},{"name":"BWALYA YAMBA","number":"0981538630","province":"CENTRAL","phone":"0981538630","shortCode":"429548"},{"name":"BESTMAN TANDEO","number":"0980905347","province":"CENTRAL","phone":"0980905347","shortCode":"409165"},{"name":"STEPHEN CHISALA","number":"0981457838","province":"CENTRAL","phone":"0981457838","shortCode":"492574"},{"name":"BARBRA MWANSA","number":"0981936483","province":"CENTRAL","phone":"0981936483","shortCode":"439015"},{"name":"MUPETA RICHARD","number":"0981883966","province":"CENTRAL","phone":"0981883966","shortCode":"457326"}]},{"name":"Mulenga Kabulo","number":"0980124860","dsas":[{"name":"LEONARD KAWELENGA","number":"0980660475","province":"COPPERBELT","phone":"0980660475","shortCode":"456756"},{"name":"CHISHIMBA ELIZABETH","number":"0980846474","province":"COPPERBELT","phone":"0980846474","shortCode":"440406"},{"name":"WAMUNDILA CHILINDA","number":"0981421142","province":"COPPERBELT","phone":"0981421142","shortCode":"425124"},{"name":"TEDDY MWANZA","number":"0980850426","province":"COPPERBELT","phone":"0980850426","shortCode":"492397"},{"name":"SAULOS BANDA","number":"0980453306","province":"COPPERBELT","phone":"0980453306","shortCode":"421340"},{"name":"SIAMATIMBA STANFORD","number":"0980226233","province":"COPPERBELT","phone":"0980226233","shortCode":"448353"},{"name":"HUMPHREY KALABA","number":"0980321616","province":"COPPERBELT","phone":"0980321616","shortCode":"413723"},{"name":"MAGGIE CHISENGA","number":"0980122951","province":"COPPERBELT","phone":"0980122951","shortCode":"416877"},{"name":"BANDA ELITA","number":"0980627762","province":"COPPERBELT","phone":"0980627762","shortCode":"466440"},{"name":"JOSEPH MUMBI","number":"0980846245","province":"COPPERBELT","phone":"0980846245","shortCode":"463941"},{"name":"MICHAEL JOHN","number":"0981607773","province":"COPPERBELT","phone":"0981607773","shortCode":"495180"},{"name":"KALIDES SHAWA","number":"0981127207","province":"COPPERBELT","phone":"0981127207","shortCode":"499879"},{"name":"SIMON MADABA","number":"0981427733","province":"COPPERBELT","phone":"0981427733","shortCode":"462375"},{"name":"FANNY NAMBELA","number":"0981988311","province":"COPPERBELT","phone":"0981988311","shortCode":"477421"},{"name":"MOFFAT KAONGA","number":"0981246717","province":"COPPERBELT","phone":"0981246717","shortCode":"468016"},{"name":"JEREMIAH MULENGA","number":"0981248215","province":"COPPERBELT","phone":"0981248215","shortCode":"459039"}]},{"name":"MANFRED CHOLA","number":"0981782994","dsas":[{"name":"SHADRICK MUTAMBO","number":"0980938000","province":"COPPERBELT","phone":"0980938000","shortCode":"488298"},{"name":"MIKE MWILA","number":"0980399267","province":"COPPERBELT","phone":"0980399267","shortCode":"436595"},{"name":"SANDRA CHIKWANDA","number":"0980945506","province":"COPPERBELT","phone":"0980945506","shortCode":"414859"},{"name":"VICTOR EVANS","number":"0980501700","province":"COPPERBELT","phone":"0980501700","shortCode":"481461"},{"name":"FRANCIS MUSUKWA","number":"0980120837","province":"COPPERBELT","phone":"0980120837","shortCode":"441225"},{"name":"BEN KAMBILIMA","number":"0980633080","province":"COPPERBELT","phone":"0980633080","shortCode":"451326"},{"name":"CHOMBA CHITALU","number":"0980501995","province":"COPPERBELT","phone":"0980501995","shortCode":"432682"},{"name":"ALBERT ZUZE","number":"0980501999","province":"COPPERBELT","phone":"0980501999","shortCode":"404870"},{"name":"ACTARS CHINUMA","number":"0980941313","province":"COPPERBELT","phone":"0980941313","shortCode":"449734"},{"name":"WILSON KAONGA","number":"0980501539","province":"COPPERBELT","phone":"0980501539","shortCode":"467491"},{"name":"PAUL MAKINA","number":"0980941414","province":"COPPERBELT","phone":"0980941414","shortCode":"411349"},{"name":"LEVY WASHENI","number":"0981172888","province":"COPPERBELT","phone":"0981172888","shortCode":"411654"},{"name":"NATHAN MWAPE","number":"0980501724","province":"COPPERBELT","phone":"0980501724","shortCode":"455879"}]},{"name":"GERALD MULENGA","number":"0980501755","dsas":[{"name":"CHRISTOPHER CHIBWE","number":"0980196980","province":"COPPERBELT","phone":"0980196980","shortCode":"488826"},{"name":"EUGINE BWALY","number":"0980633311","province":"COPPERBELT","phone":"0980633311","shortCode":"467122"},{"name":"CLEVER LWANSA","number":"0980945449","province":"COPPERBELT","phone":"0980945449","shortCode":"492756"},{"name":"MUSUKWA FLYSON","number":"0980945322","province":"COPPERBELT","phone":"0980945322","shortCode":"474092"},{"name":"MUSONGO CONRAD","number":"0980938342","province":"COPPERBELT","phone":"0980938342","shortCode":"471448"},{"name":"KENNEDY BESA","number":"0980635158","province":"COPPERBELT","phone":"0980635158","shortCode":"467724"},{"name":"LUKONDE EVANS","number":"0981187266","province":"COPPERBELT","phone":"0981187266","shortCode":"442916"},{"name":"HUMPHREY CHIBESA","number":"0981187338","province":"COPPERBELT","phone":"0981187338","shortCode":"437481"},{"name":"MULENGA GIFT","number":"0981351878","province":"COPPERBELT","phone":"0981351878","shortCode":"437548"},{"name":"KUNDA HONEST","number":"0981187050","province":"COPPERBELT","phone":"0981187050","shortCode":"414967"},{"name":"KAFUTA GEORGE","number":"0981351831","province":"COPPERBELT","phone":"0981351831","shortCode":"416622"},{"name":"MUSUANI FASNESS","number":"0981575786","province":"COPPERBELT","phone":"0981575786","shortCode":"460775"},{"name":"RISE MUKOMA","number":"0981679219","province":"COPPERBELT","phone":"0981679219","shortCode":"406840"},{"name":"MERVIS CHIKIMBI","number":"0980937302","province":"COPPERBELT","phone":"0980937302","shortCode":"474259"},{"name":"JAMES MPUNDU","number":"0981577619","province":"COPPERBELT","phone":"0981577619","shortCode":"442526"},{"name":"MULENGA JOSHUA","number":"0981788528","province":"COPPERBELT","phone":"0981788528","shortCode":"454836"}]},{"name":"Mwenya Kennedy","number":"0980822000","dsas":[{"name":"LAWRENCE KALEMBELEMBE","number":"0980765010","province":"COPPERBELT","phone":"0980765010","shortCode":"466877"},{"name":"ALICK KAUNDA","number":"0980820505","province":"COPPERBELT","phone":"0980820505","shortCode":"421913"},{"name":"KINGSLEY CHAMBO","number":"0980820700","province":"COPPERBELT","phone":"0980820700","shortCode":"436804"},{"name":"CHARLES SIAME","number":"0980822105","province":"COPPERBELT","phone":"0980822105","shortCode":"447010"},{"name":"MARY BANDA","number":"0980820712","province":"COPPERBELT","phone":"0980820712","shortCode":"406069"},{"name":"JOE ZIMBA","number":"0981227878","province":"COPPERBELT","phone":"0981227878","shortCode":"401050"},{"name":"LOVELESS MUSONDA","number":"0981147189","province":"COPPERBELT","phone":"0981147189","shortCode":"429603"},{"name":"GERALD KABWE","number":"0981227979","province":"COPPERBELT","phone":"0981227979","shortCode":"420522"},{"name":"KELVIN CHIBWE","number":"0981822982","province":"COPPERBELT","phone":"0981822982","shortCode":"407296"}]},{"name":"Kelvin Ngosa","number":"0980261950","dsas":[{"name":"LUCK KALENGA","number":"0980493999","province":"NORTH WEST","phone":"0980493999","shortCode":"472945"},{"name":"ALIMASI AMURI","number":"0980577377","province":"NORTH WEST","phone":"0980577377","shortCode":"436984"}]},{"name":"Onieve mwiinga","number":"0777764199","dsas":[{"name":"MARVIN MWEEMBA","number":"0980920344","province":"SOUTHERN","phone":"0980920344","shortCode":"418579"},{"name":"TEDDY","number":"0981638268","province":"SOUTHERN","phone":"0981638268","shortCode":"493209"},{"name":"IVY MICHELO","number":"0981787267","province":"SOUTHERN","phone":"0981787267","shortCode":"477840"},{"name":"EVERSON","number":"0981655955","province":"SOUTHERN","phone":"0981655955","shortCode":"447557"},{"name":"AGNESS K","number":"0981655990","province":"SOUTHERN","phone":"0981655990","shortCode":"448817"},{"name":"GIVEN A","number":"0981959286","province":"SOUTHERN","phone":"0981959286","shortCode":"488771"},{"name":"KELVIN","number":"0981894592","province":"SOUTHERN","phone":"0981894592","shortCode":"426291"}]},{"name":"Mostapher simbayi","number":"0980918989","dsas":[{"name":"OSCAR MWAANGA","number":"0980918932","province":"SOUTHERN","phone":"0980918932","shortCode":"451054"},{"name":"STANLEY SIMUNKOMBWE","number":"0980655858","province":"SOUTHERN","phone":"0980655858","shortCode":"482753"},{"name":"BRIDGET HACHILIPA","number":"0981657431","province":"SOUTHERN","phone":"0981657431","shortCode":"455124"},{"name":"MARTIN NTIMBAILA","number":"0981948044","province":"SOUTHERN","phone":"0981948044","shortCode":"454548"},{"name":"ESTHER KABUNDA","number":"0981924302","province":"SOUTHERN","phone":"0981924302","shortCode":"468196"},{"name":"FELIX MULENGA","number":"0981622536","province":"SOUTHERN","phone":"0981622536","shortCode":"448087"},{"name":"YVONNE MUMBA","number":"0981676302","province":"SOUTHERN","phone":"0981676302","shortCode":"425972"},{"name":"ALICE KALUMA","number":"0981815048","province":"SOUTHERN","phone":"0981815048","shortCode":"409718"},{"name":"RONARD MWALA","number":"0981988072","province":"SOUTHERN","phone":"0981988072","shortCode":"433007"},{"name":"SYDNEY CHOLA","number":"0981862882","province":"SOUTHERN","phone":"0981862882","shortCode":"458796"},{"name":"DAVID LUFUNDA","number":"0981780282","province":"SOUTHERN","phone":"0981780282","shortCode":"455739"}]},{"name":"Peter Kasuba","number":"0981981406","dsas":[{"name":"MATTHEWS KANJALA","number":"0980341916","province":"LUSAKA NORTH","phone":"0980341916","shortCode":"454991"},{"name":"PHIRI JOSEPH","number":"0980093936","province":"LUSAKA NORTH","phone":"0980093936","shortCode":"471658"},{"name":"LUBUNDA SAKUBITA","number":"0980059155","province":"LUSAKA NORTH","phone":"0980059155","shortCode":"464061"},{"name":"CHARLES LUNGU","number":"0981321598","province":"LUSAKA NORTH","phone":"0981321598","shortCode":"481974"},{"name":"BRIAN MALAMA","number":"0980060606","province":"LUSAKA NORTH","phone":"0980060606","shortCode":"478018"},{"name":"SIVERS HAMUKOMA","number":"0980144302","province":"LUSAKA NORTH","phone":"0980144302","shortCode":"424903"},{"name":"FRANCIS PHIRI","number":"0980153906","province":"LUSAKA NORTH","phone":"0980153906","shortCode":"447351"},{"name":"JACKSON PHIRI","number":"0980291820","province":"LUSAKA NORTH","phone":"0980291820","shortCode":"422576"},{"name":"MALAMA KHONDWANI","number":"0981530235","province":"LUSAKA NORTH","phone":"0981530235","shortCode":"432786"},{"name":"ASTONE ZULU","number":"0981770701","province":"LUSAKA NORTH","phone":"0981770701","shortCode":"425967"}]},{"name":"Chtaba benendictor","number":"0980645798","dsas":[{"name":"BRIVEN HAMALEYA","number":"0980610438","province":"SOUTHERN","phone":"0980610438","shortCode":"478145"},{"name":"JOYFREE MWIINGA","number":"0980681890","province":"SOUTHERN","phone":"0980681890","shortCode":"420014"},{"name":"KABABU CHIPIPA","number":"0980965500","province":"SOUTHERN","phone":"0980965500","shortCode":"472041"},{"name":"MISHECK DAKA","number":"0981414333","province":"SOUTHERN","phone":"0981414333","shortCode":"474619"},{"name":"JOSEPHINE MPHANDE","number":"0980679002","province":"SOUTHERN","phone":"0980679002","shortCode":"437678"},{"name":"THANDIWE PHIRI","number":"0981085252","province":"SOUTHERN","phone":"0981085252","shortCode":"479281"},{"name":"JOYCE HABULONGO","number":"0980645776","province":"SOUTHERN","phone":"0980645776","shortCode":"432039"},{"name":"WEDDY MWEENE","number":"0981022223","province":"SOUTHERN","phone":"0981022223","shortCode":"401623"}]},{"name":"Dennis sakala","number":"0981989839","dsas":[{"name":"BRIAN NKOMESHA","number":"0980570340","province":"SOUTHERN","phone":"0980570340","shortCode":"461605"},{"name":"YOTAM NKHOMA","number":"0980563009","province":"SOUTHERN","phone":"0980563009","shortCode":"443968"},{"name":"FAITH CHINYAMA","number":"0981638443","province":"SOUTHERN","phone":"0981638443","shortCode":"465496"}]},{"name":"Cosmas chileshe","number":"0980589393","dsas":[{"name":"CHRISTINA LUNGU","number":"0981633463","province":"COPPERBELT","phone":"0981633463","shortCode":"453048"}]},{"name":"Prince sichalwe","number":"0980124570","dsas":[{"name":"CHRISTINE CHILEMU","number":"0980861819","province":"COPPERBELT","phone":"0980861819","shortCode":"432850"},{"name":"BERTHA MUMBA","number":"0980228848","province":"COPPERBELT","phone":"0980228848","shortCode":"488397"},{"name":"MILDRED LOLOZI","number":"0980458282","province":"COPPERBELT","phone":"0980458282","shortCode":"413011"},{"name":"SIMON KACHUSHA","number":"0980121119","province":"COPPERBELT","phone":"0980121119","shortCode":"427583"},{"name":"MEMORY MUMBA","number":"0981220507","province":"COPPERBELT","phone":"0981220507","shortCode":"426027"},{"name":"ENERST KASONGO","number":"0981252508","province":"COPPERBELT","phone":"0981252508","shortCode":"435409"},{"name":"ALEXANDER NGONGA","number":"0981258100","province":"COPPERBELT","phone":"0981258100","shortCode":"447124"},{"name":"GIVEUS SHAMBOKO","number":"0981860247","province":"COPPERBELT","phone":"0981860247","shortCode":"469230"},{"name":"JOSPHAT MULENGA","number":"0981602763","province":"COPPERBELT","phone":"0981602763","shortCode":"427813"}]},{"name":"Emmanuel Banda","number":"0980013859","dsas":[{"name":"TALENT SIAJEBO","number":"0980040666","province":"LUSAKA NORTH","phone":"0980040666","shortCode":"428229"},{"name":"NATHAN ZULU","number":"0980040855","province":"LUSAKA NORTH","phone":"0980040855","shortCode":"419607"},{"name":"EVELYN KASANGA","number":"0980222873","province":"LUSAKA NORTH","phone":"0980222873","shortCode":"467809"},{"name":"PATRICIA CHOOLWE","number":"0981660224","province":"LUSAKA NORTH","phone":"0981660224","shortCode":"408835"},{"name":"EVANS BANDA","number":"0981319792","province":"LUSAKA NORTH","phone":"0981319792","shortCode":"495382"},{"name":"RUTH MWANZA","number":"0981999907","province":"LUSAKA NORTH","phone":"0981999907","shortCode":"490696"},{"name":"PATRICK ZIMBA","number":"0981449112","province":"LUSAKA NORTH","phone":"0981449112","shortCode":"433012"},{"name":"MWITWA CHIKWANDA","number":"0981874859","province":"LUSAKA NORTH","phone":"0981874859","shortCode":"487192"},{"name":"MARY KAZELI","number":"0981663612","province":"LUSAKA NORTH","phone":"0981663612","shortCode":"471185"},{"name":"ANTHONY SYAPENGA","number":"0981930322","province":"LUSAKA NORTH","phone":"0981930322","shortCode":"402165"},{"name":"MATHEW KUMWENDA","number":"0981652764","province":"LUSAKA NORTH","phone":"0981652764","shortCode":"458933"},{"name":"KELVIN TEMBO","number":"0981832673","province":"LUSAKA NORTH","phone":"0981832673","shortCode":"439893"},{"name":"VINCENT KALASA","number":"0981689536","province":"LUSAKA NORTH","phone":"0981689536","shortCode":"415725"},{"name":"RAPHAEL TEMBO","number":"0981556678","province":"LUSAKA NORTH","phone":"0981556678","shortCode":"461014"},{"name":"FRED MULAPATI","number":"0981010208","province":"LUSAKA NORTH","phone":"0981010208","shortCode":"445873"},{"name":"DANIEL NYIRENDA","number":"0981987460","province":"LUSAKA NORTH","phone":"0981987460","shortCode":"475778"}]},{"name":"Charles hungili","number":"0981601344","dsas":[{"name":"DENNIS KAHYATA","number":"0980118408","province":"NORTH WEST","phone":"0980118408","shortCode":"483494"},{"name":"CHRISCENT MALUNGO","number":"0980464150","province":"NORTH WEST","phone":"0980464150","shortCode":"430899"},{"name":"KATAKWE MORIDAH","number":"0980118463","province":"NORTH WEST","phone":"0980118463","shortCode":"413977"},{"name":"MWANSA PRISCA","number":"0981272756","province":"NORTH WEST","phone":"0981272756","shortCode":"480066"},{"name":"MATILDAH MWANSAPA","number":"0981272720","province":"NORTH WEST","phone":"0981272720","shortCode":"471839"},{"name":"KAYAMBA THIMOTHY","number":"0980493585","province":"NORTH WEST","phone":"0980493585","shortCode":"453434"},{"name":"HANGILI ASTRIDAH","number":"0981036325","province":"NORTH WEST","phone":"0981036325","shortCode":"430986"},{"name":"MUTAMPUKA MICHAEL","number":"0981645575","province":"NORTH WEST","phone":"0981645575","shortCode":"497006"}]},{"name":"Kufekisa Pumulo","number":"0981532150","dsas":[{"name":"CATHERINE NGOSA","number":"0981532156","province":"SOUTHERN","phone":"0981532156","shortCode":"476394"},{"name":"OWEN SIANKATA","number":"0981803212","province":"SOUTHERN","phone":"0981803212","shortCode":"463805"},{"name":"FELIX MIYOBA","number":"0981792030","province":"SOUTHERN","phone":"0981792030","shortCode":"451052"}]},{"name":"Charity  Mbewe","number":"0973070739","dsas":[{"name":"AARON","number":"0981655762","province":"SOUTHERN","phone":"0981655762","shortCode":"489037"},{"name":"MWEEMBA CLEMENT","number":"0981013295","province":"SOUTHERN","phone":"0981013295","shortCode":"447204"}]},{"name":"Kelly Chali","number":"0980032147","dsas":[{"name":"BRIGHTON KALWIZYI","number":"0980678410","province":"SOUTHERN","phone":"0980678410","shortCode":"0"}]},{"name":"LISHUKO BWALYA CHISHIMBA","number":"0980202992","dsas":[{"name":"MUYUNI SAOME","number":"0981742252","province":"SOUTHERN","phone":"0981742252","shortCode":"405143"}]},{"name":"TIZA MUNENGU","number":"0980013982","dsas":[{"name":"PASTOR MUKUWA","number":"0980333999","province":"LUSAKA NORTH","phone":"0980333999","shortCode":"492364"},{"name":"GETRUDE TEMBO","number":"0980018641","province":"LUSAKA NORTH","phone":"0980018641","shortCode":"484672"},{"name":"JOSEPH CHABINGA","number":"0981151807","province":"LUSAKA NORTH","phone":"0981151807","shortCode":"405745"},{"name":"FROLINAL MOONGA","number":"0981444849","province":"LUSAKA NORTH","phone":"0981444849","shortCode":"417598"},{"name":"LENARD KATEBE","number":"0981942163","province":"LUSAKA NORTH","phone":"0981942163","shortCode":"479520"},{"name":"MOSES ZULU","number":"0981932239","province":"LUSAKA NORTH","phone":"0981932239","shortCode":"495547"}]},{"name":"Margaret Nkole","number":"0980888112","dsas":[{"name":"SIMUMBA SAMUEL","number":"0980038884","province":"LUSAKA SOUTH","phone":"0980038884","shortCode":"469373"}]},{"name":"Matthews kasongo","number":"0980554444","dsas":[{"name":"RUSSELL MWAMBAZI","number":"0980027794","province":"LUSAKA CENTRAL","phone":"0980027794","shortCode":"479397"},{"name":"KENNEDY MUNSAKA","number":"0981331313","province":"LUSAKA SOUTH","phone":"0981331313","shortCode":"400237"},{"name":"STANLEY","number":"0981497070","province":"LUSAKA SOUTH","phone":"0981497070","shortCode":"401595"},{"name":"KELVIN","number":"0981785526","province":"LUSAKA SOUTH","phone":"0981785526","shortCode":"421010"}]},{"name":"Violet Miti","number":"0765935006","dsas":[{"name":"SINGOGO CHARLES","number":"0980039685","province":"LUSAKA NORTH","phone":"0980039685","shortCode":"413822"},{"name":"ALICK KALUBA","number":"0980045151","province":"LUSAKA CENTRAL","phone":"0980045151","shortCode":"462304"},{"name":"MALISAWA SIMWINGA","number":"0980880080","province":"LUSAKA NORTH","phone":"0980880080","shortCode":"429397"},{"name":"KENNEDY SHIBEKUKA","number":"0981668874","province":"LUSAKA NORTH","phone":"0981668874","shortCode":"453743"},{"name":"CONSTANCE CHOLA","number":"0981305151","province":"LUSAKA NORTH","phone":"0981305151","shortCode":"447899"},{"name":"BLESSINGS MWAMBA","number":"0981309302","province":"LUSAKA NORTH","phone":"0981309302","shortCode":"425062"},{"name":"MOSES MUSONDA","number":"0980262470","province":"LUSAKA NORTH","phone":"0980262470","shortCode":"403531"},{"name":"KANGWA BUSAKA","number":"0980019177","province":"LUSAKA NORTH","phone":"0980019177","shortCode":"452247"},{"name":"FRANK NYENDWA","number":"0980055251","province":"LUSAKA NORTH","phone":"0980055251","shortCode":"405517"},{"name":"MISHECK","number":"0980223173","province":"LUSAKA NORTH","phone":"0980223173","shortCode":"412480"},{"name":"DICKSON PHIRI","number":"0980081999","province":"LUSAKA SOUTH","phone":"0980081999","shortCode":"446233"},{"name":"PHIRI","number":"0981815129","province":"LUSAKA NORTH","phone":"0981815129","shortCode":"402348"},{"name":"EDINAH","number":"0981626434","province":"LUSAKA NORTH","phone":"0981626434","shortCode":"405427"},{"name":"MARY MFULA","number":"0981865109","province":"LUSAKA NORTH","phone":"0981865109","shortCode":"439338"},{"name":"MOMENT HAKASENKE","number":"0981596922","province":"LUSAKA NORTH","phone":"0981596922","shortCode":"435898"},{"name":"RABECCA","number":"0981048766","province":"LUSAKA NORTH","phone":"0981048766","shortCode":"443986"}]},{"name":"Tambwe Mukoma","number":"0981479968","dsas":[{"name":"TOMMY JAMPER","number":"0980017721","province":"LUSAKA NORTH","phone":"0980017721","shortCode":"469402"},{"name":"DANIEL NYATI","number":"0981880076","province":"LUSAKA NORTH","phone":"0981880076","shortCode":"430007"},{"name":"JUSTIN TEMBO","number":"0981971281","province":"LUSAKA NORTH","phone":"0981971281","shortCode":"474961"},{"name":"SAMSON DAKA","number":"0981687114","province":"LUSAKA NORTH","phone":"0981687114","shortCode":"442657"},{"name":"ACKSON MUKAILA","number":"0981593957","province":"LUSAKA NORTH","phone":"0981593957","shortCode":"400181"},{"name":"LEE KUNDA","number":"0981688771","province":"LUSAKA NORTH","phone":"0981688771","shortCode":"449030"}]},{"name":"Kaunda cleopas","number":"0981159006","dsas":[{"name":"CHANDA ABEL","number":"0980082244","province":"LUSAKA CENTRAL","phone":"0980082244","shortCode":"437066"},{"name":"ALEX NGONGA","number":"0981730805","province":"LUSAKA CENTRAL","phone":"0981730805","shortCode":"0"},{"name":"JOHN MWAPE","number":"0981877989","province":"LUSAKA CENTRAL","phone":"0981877989","shortCode":"487869"},{"name":"CHILUFYA MPUNDU","number":"0981659377","province":"LUSAKA CENTRAL","phone":"0981659377","shortCode":"402580"}]},{"name":"JOHN PHIRI","number":"0980026836","dsas":[{"name":"JOE KALUBA","number":"0980744558","province":"LUSAKA CENTRAL","phone":"0980744558","shortCode":"423859"},{"name":"CHIMUNYA","number":"0980360018","province":"LUSAKA CENTRAL","phone":"0980360018","shortCode":"496737"},{"name":"PENIUS JEMPA","number":"0980018278","province":"LUSAKA CENTRAL","phone":"0980018278","shortCode":"488783"},{"name":"PASCAL MULENGA","number":"0981610551","province":"LUSAKA CENTRAL","phone":"0981610551","shortCode":"447788"},{"name":"BIBIAN MUSUNGA","number":"0981048639","province":"LUSAKA CENTRAL","phone":"0981048639","shortCode":"432451"},{"name":"EUNICE MWANSA","number":"0981889097","province":"LUSAKA CENTRAL","phone":"0981889097","shortCode":"474665"}]},{"name":"GOODMAN HARA","number":"0980011111","dsas":[{"name":"KABWE REUBEN","number":"0980048191","province":"LUSAKA CENTRAL","phone":"0980048191","shortCode":"478183"},{"name":"JONATHAN MUNDIA","number":"0980993099","province":"LUSAKA CENTRAL","phone":"0980993099","shortCode":"469388"},{"name":"PETRONELLA MWENZI","number":"0980041167","province":"LUSAKA CENTRAL","phone":"0980041167","shortCode":"416547"},{"name":"EMMANUEL SIMWANZA","number":"0980313933","province":"LUSAKA CENTRAL","phone":"0980313933","shortCode":"432809"}]},{"name":"Fredrick mwengu","number":"0981799715","dsas":[{"name":"HEZRONE MUSONDA","number":"0980968471","province":"CENTRAL","phone":"0980968471","shortCode":"455552"},{"name":"RODAH MUSANGO","number":"0981755705","province":"CENTRAL","phone":"0981755705","shortCode":"492245"}]},{"name":"Arthur Simaluwani","number":"0978980598","dsas":[{"name":"RABBECA MALUBA","number":"0980459200","province":"COPPERBELT","phone":"0980459200","shortCode":"477873"},{"name":"TEMBO LANJENI","number":"0980322670","province":"COPPERBELT","phone":"0980322670","shortCode":"441355"},{"name":"OSCAR CHANSA","number":"0981149001","province":"COPPERBELT","phone":"0981149001","shortCode":"441332"},{"name":"NATHAN MUNAMALA","number":"0980674493","province":"COPPERBELT","phone":"0980674493","shortCode":"412028"},{"name":"TEMBO MUSA","number":"0980325055","province":"COPPERBELT","phone":"0980325055","shortCode":"468784"},{"name":"FRANCIS MALAMA","number":"0980457072","province":"COPPERBELT","phone":"0980457072","shortCode":"450966"}]},{"name":"Margaret Nkole","number":"0980888112","dsas":[{"name":"MORRIS KALALUKA","number":"0981350020","province":"LUSAKA SOUTH","phone":"0981350020","shortCode":"0"},{"name":"SIMUMBA SAMUEL","number":"0980038884","province":"LUSAKA SOUTH","phone":"0980038884","shortCode":"469373"}]},{"name":"Annold","number":"0981573068","dsas":[{"name":"PETER CHILUFYA","number":"0981331800","province":"LUSAKA SOUTH","phone":"0981331800","shortCode":"418587"},{"name":"CHIPEGO CHUULA","number":"0980155940","province":"LUSAKA CENTRAL","phone":"0980155940","shortCode":"417162"},{"name":"GESHOM MAMBWE","number":"0981992440","province":"LUSAKA SOUTH","phone":"0981992440","shortCode":"442952"}]},{"name":"BANDA RICHARD","number":"0980551111","dsas":[{"name":"SHADRICK CHINYAMA","number":"0980036167","province":"LUSAKA CENTRAL","phone":"0980036167","shortCode":"488036"},{"name":"JOHN CHIPANJE","number":"0981332224","province":"LUSAKA SOUTH","phone":"0981332224","shortCode":"487545"},{"name":"DICKSON CHIPULU","number":"0980030767","province":"LUSAKA SOUTH","phone":"0980030767","shortCode":"432761"},{"name":"PHIRI TYFORD","number":"0980036251","province":"LUSAKA SOUTH","phone":"0980036251","shortCode":"455195"},{"name":"KINGS KATUP","number":"0980724747","province":"LUSAKA SOUTH","phone":"0980724747","shortCode":"479563"},{"name":"AUDRY MAFWAFWA","number":"0980724274","province":"LUSAKA SOUTH","phone":"0980724274","shortCode":"416412"},{"name":"ALICE CHITALU","number":"0980126610","province":"LUSAKA SOUTH","phone":"0980126610","shortCode":"491985"},{"name":"JOSHUA LUPINDULA","number":"0980653555","province":"LUSAKA SOUTH","phone":"0980653555","shortCode":"401016"}]},{"name":"Annie banda","number":"0981636607","dsas":[{"name":"DIVINE BWALYA","number":"0981446034","province":"LUSAKA SOUTH","phone":"0981446034","shortCode":"436559"},{"name":"SUSAN KATUTA","number":"0980039195","province":"LUSAKA SOUTH","phone":"0980039195","shortCode":"497138"}]},{"name":"Emmanuel ng'andwe","number":"0980025228","dsas":[{"name":"DAVID KANONGOLA","number":"0980128640","province":"LUSAKA SOUTH","phone":"0980128640","shortCode":"406416"},{"name":"WASTERN MWEETWA","number":"0980082283","province":"LUSAKA NORTH","phone":"0980082283","shortCode":"494738"},{"name":"KELVIN MANYONGA","number":"0980900647","province":"LUSAKA SOUTH","phone":"0980900647","shortCode":"487924"},{"name":"EMELY MWEWA","number":"0980800000","province":"LUSAKA SOUTH","phone":"0980800000","shortCode":"412721"},{"name":"MUGALA SAVIOUR","number":"0981010709","province":"LUSAKA SOUTH","phone":"0981010709","shortCode":"435348"},{"name":"NAOMI NDAWA","number":"0981044696","province":"LUSAKA SOUTH","phone":"0981044696","shortCode":"468242"},{"name":"GEORGE NGULUBE","number":"0981657778","province":"LUSAKA SOUTH","phone":"0981657778","shortCode":"422917"}]},{"name":"Romeo","number":"0980116514","dsas":[{"name":"JACOB PHIRI","number":"0981333619","province":"COPPERBELT","phone":"0981333619","shortCode":"419477"},{"name":"MICHEAL CHABALA","number":"0981969633","province":"COPPERBELT","phone":"0981969633","shortCode":"425470"},{"name":"COSTA","number":"0980465355","province":"COPPERBELT","phone":"0980465355","shortCode":"412622"},{"name":"MINIVER BWALYA","number":"0980502277","province":"COPPERBELT","phone":"0980502277","shortCode":"474229"},{"name":"LAZAROUS","number":"0980396199","province":"COPPERBELT","phone":"0980396199","shortCode":"402278"},{"name":"CHONGO MUSONDA","number":"0980396379","province":"COPPERBELT","phone":"0980396379","shortCode":"469859"},{"name":"PHILIP MWELWA","number":"0980396061","province":"COPPERBELT","phone":"0980396061","shortCode":"412119"},{"name":"ROBSON MULUNDA","number":"0981910410","province":"COPPERBELT","phone":"0981910410","shortCode":"450241"},{"name":"ENOCK CHOLA","number":"0980465320","province":"COPPERBELT","phone":"0980465320","shortCode":"478295"},{"name":"MOSES CHANDA","number":"0981674202","province":"COPPERBELT","phone":"0981674202","shortCode":"452606"}]},{"name":"Henry","number":"0981840242","dsas":[{"name":"MAPONGA CLEOPATA","number":"0980381618","province":"LUSAKA SOUTH","phone":"0980381618","shortCode":"452101"},{"name":"CECILIA MVULA","number":"0981340007","province":"LUSAKA SOUTH","phone":"0981340007","shortCode":"410047"},{"name":"GIBSON MUGALA","number":"0980013700","province":"LUSAKA SOUTH","phone":"0980013700","shortCode":"401737"}]},{"name":"Dellan Kunda","number":"0980905378","dsas":[{"name":"PHILIMON MVULA","number":"0981457989","province":"CENTRAL","phone":"0981457989","shortCode":"493998"},{"name":"MULENGA MUSONDA","number":"0981887939","province":"CENTRAL","phone":"0981887939","shortCode":"459469"},{"name":"SLAME MEINA","number":"0981649260","province":"CENTRAL","phone":"0981649260","shortCode":"415090"},{"name":"EDWARD MVULA","number":"0981757237","province":"CENTRAL","phone":"0981757237","shortCode":"455822"},{"name":"ELIAS MWACHINGWELE","number":"0981046657","province":"CENTRAL","phone":"0981046657","shortCode":"456953"}]},{"name":"Kenny Sinyangwe","number":"0980410980","dsas":[{"name":"KAMANA","number":"0980582671","province":"COPPERBELT","phone":"0980582671","shortCode":"470151"},{"name":"BRANDON PHIRI","number":"0980888136","province":"LUSAKA CENTRAL","phone":"0980888136","shortCode":"412638"},{"name":"DANNY LWITAKWINGI","number":"0980125391","province":"LUSAKA CENTRAL","phone":"0980125391","shortCode":"453516"},{"name":"ABRAHAM SINKAMBA","number":"0981431912","province":"LUSAKA SOUTH","phone":"0981431912","shortCode":"473513"}]},{"name":"Everisto mulenga","number":"0981639304","dsas":[{"name":"NSONGELA DONALD","number":"0981664843","province":"CENTRAL","phone":"0981664843","shortCode":"467953"},{"name":"ELIAS TANASHO","number":"0980904850","province":"CENTRAL","phone":"0980904850","shortCode":"496392"},{"name":"PELEKANI SAKALA","number":"0980980999","province":"CENTRAL","phone":"0980980999","shortCode":"497074"},{"name":"NAPHTALI","number":"0981622937","province":"CENTRAL","phone":"0981622937","shortCode":"438700"},{"name":"KAPIJIMPANGA DENIS","number":"0981601991","province":"CENTRAL","phone":"0981601991","shortCode":"402605"},{"name":"ESAU SIMBEYE","number":"0981573615","province":"CENTRAL","phone":"0981573615","shortCode":"435514"},{"name":"ALI CHAMPION","number":"0981608285","province":"CENTRAL","phone":"0981608285","shortCode":"418015"}]},{"name":"Bright kampinda","number":"0769334092","dsas":[{"name":"FRANK MWEETWA","number":"0981638073","province":"COPPERBELT","phone":"0981638073","shortCode":"425526"},{"name":"BRIGHT KAMPINDA","number":"0981024091","province":"COPPERBELT","phone":"0981024091","shortCode":"481036"}]},{"name":"Paul mbao","number":"0980405955","dsas":[{"name":"SYDNEY KANGWA","number":"0980865450","province":"COPPERBELT","phone":"0980865450","shortCode":"494893"},{"name":"EMMANUEL SILWAMBA","number":"0981231544","province":"COPPERBELT","phone":"0981231544","shortCode":"470150"},{"name":"ALEX MULENGA","number":"0981126533","province":"COPPERBELT","phone":"0981126533","shortCode":"465786"},{"name":"JOHN MWAMBAZI","number":"0980454710","province":"COPPERBELT","phone":"0980454710","shortCode":"430583"},{"name":"SAMSON NAMWAZE","number":"0981550758","province":"COPPERBELT","phone":"0981550758","shortCode":"427997"}]},{"name":"BEN KAMBILIMA","number":"0980633080","dsas":[{"name":"JANET MWILA","number":"0981781880","province":"COPPERBELT","phone":"0981781880","shortCode":"438508"},{"name":"LEONARD MUMBA","number":"0981796979","province":"COPPERBELT","phone":"0981796979","shortCode":"419291"},{"name":"ROBART LWANDO","number":"0981878760","province":"COPPERBELT","phone":"0981878760","shortCode":"409613"},{"name":"SARAH NGUNI","number":"0981928285","province":"COPPERBELT","phone":"0981928285","shortCode":"405754"},{"name":"MEVIS KUTASHA","number":"0981999663","province":"COPPERBELT","phone":"0981999663","shortCode":"441682"},{"name":"MABO JOSEPH","number":"0981878763","province":"COPPERBELT","phone":"0981878763","shortCode":"479524"},{"name":"EDWARD CHABU","number":"0981171305","province":"COPPERBELT","phone":"0981171305","shortCode":"480964"},{"name":"NELSON MWABA","number":"0981244755","province":"COPPERBELT","phone":"0981244755","shortCode":"415109"},{"name":"CHARLES KAMBILIMA","number":"0981999659","province":"COPPERBELT","phone":"0981999659","shortCode":"470941"},{"name":"SHAMROCK LUPIYA","number":"0981626291","province":"COPPERBELT","phone":"0981626291","shortCode":"466308"},{"name":"RACHAEL MASAMBU","number":"0981621298","province":"COPPERBELT","phone":"0981621298","shortCode":"424676"}]},{"name":"Sinkala Bernard","number":"0981624700","dsas":[{"name":"NSWANA LUMAYI","number":"0981971597","province":"COPPERBELT","phone":"0981971597","shortCode":"455717"},{"name":"JEPHTER CHIBUYE","number":"0981038214","province":"COPPERBELT","phone":"0981038214","shortCode":"467794"},{"name":"BERNARD SINKALA","number":"0981729441","province":"COPPERBELT","phone":"0981729441","shortCode":"474883"},{"name":"MARY MUMBA","number":"0981580631","province":"COPPERBELT","phone":"0981580631","shortCode":"446032"}]},{"name":"ALICE CHOMBA","number":"0980509250","dsas":[{"name":"BEAUTY KALUNGA","number":"0980509202","province":"COPPERBELT","phone":"0980509202","shortCode":"439281"},{"name":"CHRISTABEL PHIRI","number":"0980674898","province":"COPPERBELT","phone":"0980674898","shortCode":"436592"},{"name":"CHIPASHA MWAMBA","number":"0980124204","province":"COPPERBELT","phone":"0980124204","shortCode":"448474"}]},{"name":"Chikontwe christopher","number":"0981353960","dsas":[{"name":"CHIKONTWE CHRISTOPHER","number":"0981921329","province":"COPPERBELT","phone":"0981921329","shortCode":"460167"},{"name":"CHIPEGO KANGUMU","number":"0981192076","province":"COPPERBELT","phone":"0981192076","shortCode":"402723"},{"name":"MAYBIN KUNDA","number":"0981901372","province":"COPPERBELT","phone":"0981901372","shortCode":"453151"},{"name":"PHIRI MASINA","number":"0981246907","province":"COPPERBELT","phone":"0981246907","shortCode":"413343"},{"name":"SALLY CHEWE","number":"0981023304","province":"COPPERBELT","phone":"0981023304","shortCode":"446180"}]},{"name":"Kenneth Kamanga","number":"0981352525","dsas":[{"name":"CHANDA MUBANGA","number":"0981963439","province":"COPPERBELT","phone":"0981963439","shortCode":"402432"},{"name":"JOYCE BWALYA","number":"0981352515","province":"COPPERBELT","phone":"0981352515","shortCode":"409301"},{"name":"KAMANGA","number":"0981707033","province":"COPPERBELT","phone":"0981707033","shortCode":"442845"},{"name":"KENNETH","number":"0981737399","province":"COPPERBELT","phone":"0981737399","shortCode":"421458"}]},{"name":"Maison Mukandawire","number":"0981260859","dsas":[{"name":"VALERIA MULENGA","number":"0981951806","province":"COPPERBELT","phone":"0981951806","shortCode":"495891"},{"name":"JOHN MKANDAWIRE","number":"0981046605","province":"COPPERBELT","phone":"0981046605","shortCode":"461969"}]},{"name":"Aaron Shilangwa","number":"0981809739","dsas":[{"name":"AARON SHILANGWA","number":"0981570421","province":"COPPERBELT","phone":"0981570421","shortCode":"421623"},{"name":"EMMANUEL KATEBE","number":"0981575245","province":"COPPERBELT","phone":"0981575245","shortCode":"473839"}]},{"name":"Emmanuel Hampande","number":"0980386344","dsas":[{"name":"SAILI PHIRI","number":"0980728900","province":"LUSAKA NORTH","phone":"0980728900","shortCode":"417335"},{"name":"MILIMO MALAMBO","number":"0980351049","province":"LUSAKA NORTH","phone":"0980351049","shortCode":"405101"},{"name":"MIZECK BANDA","number":"0980017181","province":"LUSAKA CENTRAL","phone":"0980017181","shortCode":"462925"},{"name":"MOSES CHIBWE","number":"0981663546","province":"LUSAKA NORTH","phone":"0981663546","shortCode":"475981"},{"name":"JOSEPH SICHINSAMBWE","number":"0980990080","province":"LUSAKA NORTH","phone":"0980990080","shortCode":"451564"},{"name":"JOLEZYA SYDNEY","number":"0981287686","province":"LUSAKA NORTH","phone":"0981287686","shortCode":"447659"},{"name":"FREDDY MUKWEZALAMBA","number":"0980015346","province":"LUSAKA NORTH","phone":"0980015346","shortCode":"465780"},{"name":"CHANDA SEFELINO","number":"0980147700","province":"LUSAKA SOUTH","phone":"0980147700","shortCode":"413632"},{"name":"LOBBY NKOLE","number":"0981820885","province":"LUSAKA NORTH","phone":"0981820885","shortCode":"452677"},{"name":"JEREMIAH NDONDELA","number":"0981808719","province":"LUSAKA NORTH","phone":"0981808719","shortCode":"467332"},{"name":"SHADRECK ZULU","number":"0981624502","province":"LUSAKA NORTH","phone":"0981624502","shortCode":"408267"},{"name":"BERNARD","number":"0981737644","province":"LUSAKA NORTH","phone":"0981737644","shortCode":"407424"}]},{"name":"Joseph miyanda","number":"0980772249","dsas":[{"name":"VALERIA NKANDU","number":"0980978401","province":"CENTRAL","phone":"0980978401","shortCode":"407281"},{"name":"MARY SAMPA","number":"0981298855","province":"CENTRAL","phone":"0981298855","shortCode":"465718"}]},{"name":"TWAAMBO SIMAKANI","number":"0981297287","dsas":[{"name":"BRENDA NKONDO","number":"0981539999","province":"CENTRAL","phone":"0981539999","shortCode":"476518"},{"name":"PETER CHIBWE","number":"0981897302","province":"CENTRAL","phone":"0981897302","shortCode":"421269"},{"name":"BRENDA DAKA","number":"0981917699","province":"CENTRAL","phone":"0981917699","shortCode":"411390"},{"name":"JUSTIN SIMAKANI","number":"0980795690","province":"CENTRAL","phone":"0980795690","shortCode":"462438"},{"name":"ELIJAH NSOSE","number":"0981871339","province":"CENTRAL","phone":"0981871339","shortCode":"463216"}]},{"name":"Clarence daka","number":"0980980019","dsas":[{"name":"SHAWN DAKA","number":"0981459889","province":"CENTRAL","phone":"0981459889","shortCode":"458232"},{"name":"MUKELABAI MUKELABAI","number":"0981755726","province":"CENTRAL","phone":"0981755726","shortCode":"445798"},{"name":"JINO RAKU","number":"0981611676","province":"CENTRAL","phone":"0981611676","shortCode":"405549"},{"name":"FELIX MWELWA","number":"0981989574","province":"CENTRAL","phone":"0981989574","shortCode":"408873"},{"name":"JOY CHILESHE","number":"0981289702","province":"CENTRAL","phone":"0981289702","shortCode":"446761"}]},{"name":"Joseph","number":"0981865453","dsas":[{"name":"MWANSA EUSTINA","number":"0981271000","province":"NORTH WEST","phone":"0981271000","shortCode":"491394"},{"name":"CHARLES TONGEKA","number":"0981268002","province":"NORTH WEST","phone":"0981268002","shortCode":"442916"},{"name":"GODFREY MULENGA","number":"0981720320","province":"NORTH WEST","phone":"0981720320","shortCode":"488429"}]},{"name":"Rhodan","number":"0981665359","dsas":[{"name":"ZAKIEL KAJILAKWENDA","number":"0980118922","province":"NORTH WEST","phone":"0980118922","shortCode":"486510"},{"name":"CHIPALO SAMUEL","number":"0981113026","province":"NORTH WEST","phone":"0981113026","shortCode":"466234"},{"name":"REAGAN MWENDA","number":"0981927433","province":"NORTH WEST","phone":"0981927433","shortCode":"425125"}]},{"name":"Sydney Muzyamba","number":"0981918999","dsas":[{"name":"BETTY","number":"0981690115","province":"SOUTHERN","phone":"0981690115","shortCode":"426730"},{"name":"DANFORD","number":"0981988135","province":"SOUTHERN","phone":"0981988135","shortCode":"474276"},{"name":"SAMANTHAR","number":"0981787140","province":"SOUTHERN","phone":"0981787140","shortCode":"433166"},{"name":"MADELINE DAKA","number":"0981926992","province":"SOUTHERN","phone":"0981926992","shortCode":"463760"},{"name":"CHANDA","number":"0981590617","province":"SOUTHERN","phone":"0981590617","shortCode":"449563"},{"name":"KUTELA","number":"0981377479","province":"SOUTHERN","phone":"0981377479","shortCode":"486243"}]},{"name":"George Hambulo","number":"0981760180","dsas":[{"name":"BORNWELL DAKA","number":"0981891849","province":"CENTRAL","phone":"0981891849","shortCode":"418276"}]},{"name":"Alfred Mwalongo","number":"0981980756","dsas":[{"name":"JAMES KANGALE","number":"0980222803","province":"LUSAKA NORTH","phone":"0980222803","shortCode":"469583"},{"name":"CLEMENT MOONGA","number":"0980337553","province":"LUSAKA NORTH","phone":"0980337553","shortCode":"433368"},{"name":"JOSHUA CHISHI","number":"0981153211","province":"LUSAKA NORTH","phone":"0981153211","shortCode":"483674"},{"name":"VINCENT ZULU","number":"0980056763","province":"LUSAKA NORTH","phone":"0980056763","shortCode":"433810"},{"name":"DANNY CHIBWE","number":"0980056454","province":"LUSAKA NORTH","phone":"0980056454","shortCode":"468780"},{"name":"WIMANA ANGELA","number":"0980059778","province":"LUSAKA NORTH","phone":"0980059778","shortCode":"420298"},{"name":"MWIYA MWIYA","number":"0980059488","province":"LUSAKA NORTH","phone":"0980059488","shortCode":"416073"},{"name":"PRINCES KANGUMU","number":"0980513038","province":"LUSAKA NORTH","phone":"0980513038","shortCode":"494128"},{"name":"MERCY MUTALE","number":"0980444347","province":"LUSAKA NORTH","phone":"0980444347","shortCode":"487296"},{"name":"DOROTHY MAMBWE","number":"0980732575","province":"LUSAKA NORTH","phone":"0980732575","shortCode":"437878"},{"name":"KELLY CHIPANTA","number":"0980058939","province":"LUSAKA NORTH","phone":"0980058939","shortCode":"413872"},{"name":"AUSTINE TEMBO","number":"0981676720","province":"LUSAKA NORTH","phone":"0981676720","shortCode":"450838"},{"name":"EVANS KASEBA","number":"0981992281","province":"LUSAKA NORTH","phone":"0981992281","shortCode":"407064"},{"name":"STEVEN DAKA","number":"0981805641","province":"LUSAKA NORTH","phone":"0981805641","shortCode":"458721"},{"name":"EZRA CHIRWA","number":"0981804345","province":"LUSAKA NORTH","phone":"0981804345","shortCode":"487646"},{"name":"BRIDGET MUSHILI","number":"0981682202","province":"LUSAKA NORTH","phone":"0981682202","shortCode":"459628"},{"name":"CLEMENT MAYANI","number":"0981619187","province":"LUSAKA NORTH","phone":"0981619187","shortCode":"414843"},{"name":"CHIRWA MAUREEN","number":"0981924046","province":"LUSAKA NORTH","phone":"0981924046","shortCode":"441102"},{"name":"MARTIN MUMBA","number":"0981769029","province":"LUSAKA NORTH","phone":"0981769029","shortCode":"460433"}]},{"name":"BERTHA LUBINDA","number":"0981969690","dsas":[{"name":"GERSHOM CHIBESA","number":"0981110666","province":"COPPERBELT","phone":"0981110666","shortCode":"499067"},{"name":"MUKONKA JIMMY","number":"0981356688","province":"COPPERBELT","phone":"0981356688","shortCode":"457497"}]},{"name":"Linnah Mwenda","number":"0980124842","dsas":[{"name":"GRACE MALAMA","number":"0981595164","province":"LUSAKA CENTRAL","phone":"0981595164","shortCode":"0"},{"name":"CATHERINE MIYANDA","number":"0980398019","province":"LUSAKA CENTRAL","phone":"0980398019","shortCode":"0"}]},{"name":"Loveness Mbewe","number":"0981177833","dsas":[{"name":"SHADRECK CHANDA","number":"0981253028","province":"COPPERBELT","phone":"0981253028","shortCode":"482718"}]},{"name":"Sarah Namwila","number":"0981930288","dsas":[{"name":"LOYD KATONGO","number":"0981428976","province":"LUSAKA CENTRAL","phone":"0981428976","shortCode":"405723"},{"name":"BENARD NKHATA","number":"0980808806","province":"LUSAKA CENTRAL","phone":"0980808806","shortCode":"434805"},{"name":"STANILAS NDAYISHIMIYE","number":"0981912819","province":"LUSAKA CENTRAL","phone":"0981912819","shortCode":"458633"}]},{"name":"Shaft mahila","number":"0980920609","dsas":[{"name":"CLIFORD","number":"0980921707","province":"SOUTHERN","phone":"0980921707","shortCode":"473831"},{"name":"WISDOM","number":"0981086966","province":"SOUTHERN","phone":"0981086966","shortCode":"431510"},{"name":"HABEENZU","number":"0980916327","province":"SOUTHERN","phone":"0980916327","shortCode":"430226"}]},{"name":"Gift Kalengesa","number":"0980957287","dsas":[{"name":"LIKANDO PENLOPE","number":"0981799462","province":"SOUTHERN","phone":"0981799462","shortCode":"404578"},{"name":"KALENGESA KALENGESA","number":"0981023465","province":"SOUTHERN","phone":"0981023465","shortCode":"448944"}]},{"name":"Blessing Mweene","number":"0967290629","dsas":[{"name":"MITI FRIDAH","number":"0981412128","province":"SOUTHERN","phone":"0981412128","shortCode":"448703"},{"name":"CRALA KALUNGA","number":"0981612711","province":"SOUTHERN","phone":"0981612711","shortCode":"465488"}]},{"name":"Musonda","number":"0981951110","dsas":[{"name":"PATRICK","number":"0981821803","province":"SOUTHERN","phone":"0981821803","shortCode":"464884"},{"name":"JOHNSON","number":"0981900794","province":"SOUTHERN","phone":"0981900794","shortCode":"439932"}]},{"name":"Daniel Mutambekwa","number":"0962531908","dsas":[{"name":"ALICK KUNDA","number":"0981402222","province":"SOUTHERN","phone":"0981402222","shortCode":"467813"},{"name":"ALICK MUTAMBEKWA","number":"0981402110","province":"SOUTHERN","phone":"0981402110","shortCode":"422894"}]},{"name":"Ponshabo Chipulu","number":"0771002457","dsas":[{"name":"ZEBRON CHITAMBI","number":"0980082555","province":"LUSAKA SOUTH","phone":"0980082555","shortCode":"467433"},{"name":"SEBASTIAN PHIRI","number":"0980083895","province":"LUSAKA SOUTH","phone":"0980083895","shortCode":"473530"},{"name":"MICHELLE KIM","number":"0981637136","province":"SOUTHERN","phone":"0981637136","shortCode":"418491"}]},{"name":"Eric","number":"0981444484","dsas":[{"name":"ATOTWE NTALASHA","number":"0981063366","province":"CENTRAL","phone":"0981063366","shortCode":"467015"},{"name":"JOSHUA SIYUMBWA","number":"0980102653","province":"LUSAKA CENTRAL","phone":"0980102653","shortCode":"425822"}]},{"name":"Mubako Chishimba","number":"0980564335","dsas":[{"name":"RABBECA SINKUYU","number":"0981788004","province":"SOUTHERN","phone":"0981788004","shortCode":"466428"}]},{"name":"Trevor Nawa","number":"0980888128","dsas":[{"name":"KALUNGA RUTH","number":"0980611119","province":"LUSAKA NORTH","phone":"0980611119","shortCode":"405275"}]},{"name":"Spencer Ng'andwe","number":"0981048640","dsas":[{"name":"PRECIOUS MWILA","number":"0980633535","province":"COPPERBELT","phone":"0980633535","shortCode":"412146"}]},{"name":"Patrick Mudenda","number":"0760663939","dsas":[{"name":"LWEENDO KABBINJI","number":"0981388290","province":"SOUTHERN","phone":"0981388290","shortCode":"408192"}]},{"name":"Beniah Ngandula","number":"0981816732","dsas":[{"name":"REUBEN","number":"0981945202","province":"LUSAKA NORTH","phone":"0981945202","shortCode":"481388"}]},{"name":"NJEBE","number":"0981988885","dsas":[{"name":"FRIDAH NDOMBE","number":"0981053136","province":"SOUTHERN","phone":"0981053136","shortCode":"0"}]},{"name":"Esnart kalunga","number":"0779713637","dsas":[{"name":"EVANS MULENGA","number":"0980091109","province":"LUSAKA CENTRAL","phone":"0980091109","shortCode":"434673"}]},{"name":"James mumba","number":"0981235454","dsas":[{"name":"DAVID MUMBA","number":"0980591992","province":"COPPERBELT","phone":"0980591992","shortCode":"448923"}]},{"name":"Simumba samuel","number":"0980038884","dsas":[{"name":"SITALI MULYOKELA","number":"0981184658","province":"LUSAKA CENTRAL","phone":"0981184658","shortCode":"441085"},{"name":"EUGENE KALALUKA","number":"0980411498","province":"LUSAKA SOUTH","phone":"0980411498","shortCode":"415535"},{"name":"DAINESS CHINENGA","number":"0981688945","province":"LUSAKA SOUTH","phone":"0981688945","shortCode":"496095"},{"name":"PURITY DAKA","number":"0981659341","province":"LUSAKA SOUTH","phone":"0981659341","shortCode":"492856"},{"name":"FELIX MUMBA","number":"0981995956","province":"LUSAKA SOUTH","phone":"0981995956","shortCode":"458926"},{"name":"INNOCENT LONGWA","number":"0981705001","province":"LUSAKA SOUTH","phone":"0981705001","shortCode":"426645"},{"name":"DAMAZIO","number":"0981705000","province":"LUSAKA SOUTH","phone":"0981705000","shortCode":"491482"},{"name":"JAMES LUANDP","number":"0981988262","province":"LUSAKA SOUTH","phone":"0981988262","shortCode":"472630"}]},{"name":"ISAAC MUTENA","number":"0981988887","dsas":[{"name":"ALICE MIYOBA","number":"0981605696","province":"SOUTHERN","phone":"0981605696","shortCode":"422449"}]},{"name":"Cynthia Mutale Chisanga","number":"0980888013","dsas":[{"name":"KAZIMBAYA ELVIS","number":"0980582336","province":"COPPERBELT","phone":"0980582336","shortCode":"413978"},{"name":"FREDRICK KANGWA","number":"0980121219","province":"COPPERBELT","phone":"0980121219","shortCode":"433457"}]},{"name":"Esaesa lupando mununga","number":"0981894910","dsas":[{"name":"MUSONDA PATRICIA","number":"0980715505","province":"COPPERBELT","phone":"0980715505","shortCode":"497199"}]},{"name":"Tryson Blair PHIRI","number":"0980765644","dsas":[{"name":"AARON MUBANGA","number":"0981933075","province":"COPPERBELT","phone":"0981933075","shortCode":"421923"}]},{"name":"BRIGHTON KALWIZYI","number":"0980678410","dsas":[{"name":"CHUMA MUCHINDU","number":"0980038242","province":"LUSAKA SOUTH","phone":"0980038242","shortCode":"477150"},{"name":"NKOMO EDWARD","number":"0980569384","province":"SOUTHERN","phone":"0980569384","shortCode":"499064"},{"name":"LUUMUNO MUNJALA","number":"0980567921","province":"SOUTHERN","phone":"0980567921","shortCode":"468260"}]},{"name":"Abtonngombe","number":"0971806867","dsas":[{"name":"ANDREW CHAMA","number":"0980313940","province":"LUSAKA CENTRAL","phone":"0980313940","shortCode":"435057"},{"name":"SARAH NAMWILA","number":"0981930288","province":"LUSAKA CENTRAL","phone":"0981930288","shortCode":"462238"}]},{"name":"Timothy Musengu","number":"0980639050","dsas":[{"name":"DIANA MUMBA","number":"0981048468","province":"COPPERBELT","phone":"0981048468","shortCode":"488385"}]},{"name":"Mulenga","number":"0980869918","dsas":[{"name":"SUPRICIOUS MUSONDA","number":"0981219399","province":"COPPERBELT","phone":"0981219399","shortCode":"444861"},{"name":"MARSHAL LUNDA","number":"0981100004","province":"COPPERBELT","phone":"0981100004","shortCode":"413566"}]},{"name":"Andrew Chama","number":"0980313940","dsas":[{"name":"NICHOLA ARUDO","number":"0981893866","province":"LUSAKA CENTRAL","phone":"0981893866","shortCode":"444798"},{"name":"NAMONDA NAMAKANDO","number":"0981017540","province":"LUSAKA CENTRAL","phone":"0981017540","shortCode":"479731"}]},{"name":"Bwalya sosbery","number":"0981366534","dsas":[{"name":"BEATRICE MWEWA","number":"0980866816","province":"COPPERBELT","phone":"0980866816","shortCode":"498136"},{"name":"ALLAN KAPEPULA","number":"0981142828","province":"COPPERBELT","phone":"0981142828","shortCode":"402720"},{"name":"SERAH MWAKAMUI","number":"0981260665","province":"COPPERBELT","phone":"0981260665","shortCode":"427382"},{"name":"NYAENDE","number":"0981891742","province":"COPPERBELT","phone":"0981891742","shortCode":"429713"},{"name":"BEVARLY CHANDA","number":"0981142699","province":"COPPERBELT","phone":"0981142699","shortCode":"474692"}]},{"name":"Luck kalenga","number":"0980493999","dsas":[{"name":"MEMORY MAMBWE","number":"0980118383","province":"NORTH WEST","phone":"0980118383","shortCode":"450970"},{"name":"MEANS BOWA","number":"0980469594","province":"NORTH WEST","phone":"0980469594","shortCode":"404537"},{"name":"MILZ KAMBWENJI","number":"0980464111","province":"NORTH WEST","phone":"0980464111","shortCode":"479050"},{"name":"INGOMBE MWANGALA","number":"0981113685","province":"NORTH WEST","phone":"0981113685","shortCode":"485377"},{"name":"MUBANGA OWEN","number":"0981559401","province":"NORTH WEST","phone":"0981559401","shortCode":"417004"},{"name":"CHISENGA ELVIS","number":"0981600781","province":"NORTH WEST","phone":"0981600781","shortCode":"495150"},{"name":"CHANDA PRINCESS","number":"0981785729","province":"NORTH WEST","phone":"0981785729","shortCode":"466591"},{"name":"MUSONDA","number":"0981594131","province":"NORTH WEST","phone":"0981594131","shortCode":"450188"},{"name":"KAKUMBA BOAS","number":"0981653701","province":"NORTH WEST","phone":"0981653701","shortCode":"440138"},{"name":"MUKANZU PRUDENCE","number":"0981607178","province":"NORTH WEST","phone":"0981607178","shortCode":"451778"}]},{"name":"ZAMPOST-MDE1","number":"00","dsas":[{"name":"CRISPS MUCHINDA","number":"0981880130","province":"LUSAKA SOUTH","phone":"0981880130","shortCode":"483394"}]},{"name":"Charity kanyolo","number":"0981955230","dsas":[{"name":"CLETUS KUNDA","number":"0981353862","province":"COPPERBELT","phone":"0981353862","shortCode":"0"}]},{"name":"Lazarus Simbowe","number":"0980611173","dsas":[{"name":"KUNDA PATRICIA","number":"0981301000","province":"CENTRAL","phone":"0981301000","shortCode":"0"}]},{"name":"BLESS SIAZEMBA","number":"0981810369","dsas":[{"name":"RUTH","number":"0981873105","province":"SOUTHERN","phone":"0981873105","shortCode":"461003"},{"name":"NYAMBE NAMUSHI","number":"0981815442","province":"SOUTHERN","phone":"0981815442","shortCode":"498427"}]},{"name":"Shaft mahila","number":"0980920609","dsas":[{"name":"CLIFORD","number":"0980921707","province":"SOUTHERN","phone":"0980921707","shortCode":"473831"},{"name":"WISDOM","number":"0981086966","province":"SOUTHERN","phone":"0981086966","shortCode":"431510"},{"name":"HABEENZU","number":"0980916327","province":"SOUTHERN","phone":"0980916327","shortCode":"430226"}]}];
+
+// ═══════════════════════════════════════════════
+// LIVE DATA LOADING — fetches MasterList tab
+// Falls back to embedded MDE_DATA if unavailable
+// ═══════════════════════════════════════════════
+let LIVE_MDE_DATA = null; // populated on page load if sheet is reachable
+
+async function tryLoadLiveMasterList() {
+  const statusEl = document.getElementById('liveDataStatus');
+  if (SCRIPT_URL.includes('YOUR_SCRIPT_ID')) return; // not configured yet
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=getMasterList');
+    const d = await r.json();
+    if (d.mdes && d.mdes.length) {
+      LIVE_MDE_DATA = d.mdes;
+      const count = d.mdes.reduce((s,m)=>s+m.dsas.length,0);
+      if (statusEl) statusEl.innerHTML = `🟢 Live data: ${d.mdes.length} MDEs · ${count} DSAs`;
+      console.log(`Loaded live master list: ${d.mdes.length} MDEs, ${count} DSAs`);
+    }
+  } catch(e) {
+    if (statusEl) statusEl.innerHTML = '🟡 Using built-in list (sheet unreachable)';
+  }
+}
+
+function getActiveMDEData() {
+  return LIVE_MDE_DATA || MDE_DATA;
+}
+
+// ═══════════════════════════════════════════════
+// SESSION STATE
+// ═══════════════════════════════════════════════
+let session = { role: null, mde: null, adminName: null };
+let selectedDSA = null;
+let filteredDSAs = [];
+let sessionLog = [];
+
+// Feature 2: SIM duplicate tracking — all SIMs ever submitted (session + fetched from sheet)
+let knownSIMs = new Set();
+
+// Feature 1: DSAs whose status is Approved — excluded from the active list
+let approvedDSANums = new Set();
+
+// ═══════════════════════════════════════════════
+// ROLE SWITCHING
+// ═══════════════════════════════════════════════
+function switchRole(role) {
+  document.getElementById('btnMDE').classList.toggle('active', role==='mde');
+  document.getElementById('btnAdmin').classList.toggle('active', role==='admin');
+  document.getElementById('mdeForm').classList.toggle('hidden', role!=='mde');
+  document.getElementById('adminForm').classList.toggle('hidden', role!=='admin');
+}
+
+// ═══════════════════════════════════════════════
+// MDE SESSION
+// ═══════════════════════════════════════════════
+function filterMDEList(q) {
+  const dd = document.getElementById('mdeDropdown');
+  const matches = getActiveMDEData().filter(m=>m.name.toLowerCase().includes(q.toLowerCase())).slice(0,12);
+  if(!q||!matches.length){dd.style.display='none';return;}
+  dd.style.display='block';
+  dd.innerHTML=matches.map(m=>`<div class="dd-item" onclick="selectMDE('${m.name.replace(/'/g,"\\'")}','${m.number}')"><strong>${m.name}</strong><span style="font-size:11px;color:var(--text2)">${m.dsas.length} DSA${m.dsas.length!==1?'s':''} assigned</span></div>`).join('');
+}
+
+function selectMDE(name,number){
+  document.getElementById('mdeNameInput').value=name;
+  document.getElementById('selMDEName').value=name;
+  document.getElementById('selMDENumber').value=number;
+  document.getElementById('mdeDropdown').style.display='none';
+  document.getElementById('mdeVerifyField').classList.remove('hidden');
+  document.getElementById('mdePhoneVerify').focus();
+}
+
+function startMDESession(){
+  const name=document.getElementById('selMDEName').value;
+  const storedNum=document.getElementById('selMDENumber').value;
+  const entered=document.getElementById('mdePhoneVerify').value.replace(/\D/g,'');
+  const errDiv=document.getElementById('mdeSetupError');
+
+  if(!name){showErr(errDiv,'Please select your name from the list.');return;}
+  if(!entered){showErr(errDiv,'Please enter your phone number for verification.');return;}
+
+  const mdeData=getActiveMDEData().find(m=>m.name===name);
+  const clean=n=>n.replace(/\D/g,'').replace(/^260/,'').replace(/^0/,'');
+  if(clean(entered)!==clean(storedNum)&&entered!==storedNum){
+    showErr(errDiv,`Verification failed. The number you entered doesn't match the registered number for ${name}.`);
+    return;
+  }
+
+  session={role:'mde',mde:mdeData,adminName:null};
+  setupMDEUI(mdeData);
+  closeSetup();
+  showToast('Welcome, '+name.split(' ')[0]+'! 👋');
+}
+
+function setupMDEUI(mdeData){
+  const name=mdeData.name;
+  document.getElementById('sessLabel').textContent=name.split(' ')[0].toUpperCase();
+  document.getElementById('sessDot').className='dot';
+  document.getElementById('sessionBadge').className='session-badge';
+  document.getElementById('noSessMsg').classList.add('hidden');
+  document.getElementById('adminSubmitNote').classList.add('hidden');
+  document.getElementById('submitForm').classList.remove('hidden');
+
+  document.getElementById('mdeAvBig').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('mdeCardName').textContent=name;
+  document.getElementById('mdeCardNum').textContent=mdeData.number;
+  document.getElementById('dashAvBig').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('dashMDEName').textContent=name;
+  document.getElementById('dashMDEnotice').classList.remove('hidden');
+  document.getElementById('dashAdminNotice').classList.add('hidden');
+  document.getElementById('provinceCard').style.display='none';
+  document.getElementById('mdeBreakdownCard').style.display='none';
+
+  filteredDSAs=[...mdeData.dsas];
+  renderDSAs(filteredDSAs);
+  updateMDEProgressCard();
+
+  // Background: fetch approved DSAs and known SIMs from sheet
+  syncMDEStateFromSheet();
+}
+
+// ── Sync approved DSAs + known SIMs from the sheet in background ─
+async function syncMDEStateFromSheet(){
+  if(SCRIPT_URL.includes('YOUR_SCRIPT_ID')) return;
+  try{
+    const url=`${SCRIPT_URL}?action=getMyLog&mdeName=${encodeURIComponent(session.mde.name)}&role=mde`;
+    const r=await fetch(url,{redirect:'follow'});
+    if(!r.ok) return;
+    const d=await r.json();
+    if(!d.rows) return;
+
+    const newlyApproved=new Set();
+    d.rows.forEach(row=>{
+      // Feature 2: log all SIM serials to block duplicates
+      if(row.simSerial && row.simSerial.length===20) knownSIMs.add(row.simSerial);
+      // Feature 1: track approved DSA numbers
+      if(String(row.status).toLowerCase()==='approved' && row.dsaNumber){
+        newlyApproved.add(String(row.dsaNumber).trim());
+      }
+    });
+
+    if(newlyApproved.size>0){
+      newlyApproved.forEach(n=>approvedDSANums.add(n));
+      removeApprovedDSAs();
+    }
+  }catch(e){ /* silent — non-critical */ }
+}
+
+// Feature 1: Remove approved DSAs from the active list
+function removeApprovedDSAs(){
+  if(!session.mde) return;
+  const before=filteredDSAs.length;
+  filteredDSAs=filteredDSAs.filter(d=>!approvedDSANums.has(d.number));
+  // Also update the master list so future searches don't show them
+  session.mde.dsas=session.mde.dsas.filter(d=>!approvedDSANums.has(d.number));
+  if(filteredDSAs.length<before){
+    renderDSAs(filteredDSAs);
+    updateMDEProgressCard();
+    // Deselect if selected DSA was just removed
+    if(selectedDSA && approvedDSANums.has(selectedDSA.number)){
+      selectedDSA=null;
+      document.getElementById('selDSAAlert').classList.add('hidden');
+      checkSubmitBtn();
+    }
+  }
+}
+
+// Feature 3 (MDE side): update the progress counter on the MDE card
+function updateMDEProgressCard(){
+  if(!session.mde) return;
+  const total=session.mde.dsas.length+approvedDSANums.size; // original total
+  const done=approvedDSANums.size;
+  const remaining=session.mde.dsas.length;
+  document.getElementById('mdeCardCount').textContent=
+    `✅ ${done} completed · ⏳ ${remaining} remaining (${total} total)`;
+  document.getElementById('dashMDEsub').textContent=
+    `✅ ${done} approved · ⏳ ${remaining} remaining`;
+}
+
+// ═══════════════════════════════════════════════
+// ADMIN SESSION
+// ═══════════════════════════════════════════════
+function startAdminSession(){
+  const adminName=document.getElementById('adminNameSel').value;
+  const code=document.getElementById('adminCodeInput').value;
+  const errDiv=document.getElementById('adminSetupError');
+
+  if(!adminName){showErr(errDiv,'Please select your name.');return;}
+  if(code.trim().toUpperCase()!==ADMIN_CODE){showErr(errDiv,'Invalid admin access code. Please try again.');return;}
+
+  session={role:'admin',mde:null,adminName};
+  setupAdminUI(adminName);
+  closeSetup();
+  showToast('Admin access granted. Welcome, '+adminName+'! 🔐');
+}
+
+function setupAdminUI(adminName){
+  document.getElementById('sessLabel').textContent=adminName.toUpperCase().split(' ')[0];
+  document.getElementById('sessDot').className='dot admin';
+  document.getElementById('sessionBadge').className='session-badge admin';
+  document.getElementById('noSessMsg').classList.add('hidden');
+  document.getElementById('submitForm').classList.add('hidden');
+  document.getElementById('adminSubmitNote').classList.remove('hidden');
+  document.getElementById('dashMDEnotice').classList.add('hidden');
+  document.getElementById('dashAdminNotice').classList.remove('hidden');
+  document.getElementById('adminWelcomeMsg').textContent='Logged in as: '+adminName+' · Full combined view';
+  document.getElementById('provinceCard').style.display='block';
+  document.getElementById('mdeBreakdownCard').style.display='block';
+  // Admin can't submit SIMs, redirect to dashboard
+  showTab('dashboard');
+}
+
+function closeSetup(){document.getElementById('setupOverlay').style.display='none';}
+
+// ═══════════════════════════════════════════════
+// DSA LIST
+// ═══════════════════════════════════════════════
+function filterDSAs(q){
+  if(!session.mde)return;
+  const ql=q.toLowerCase();
+  filteredDSAs=session.mde.dsas.filter(d=>
+    d.name.toLowerCase().includes(ql)||d.phone.includes(ql)||d.province.toLowerCase().includes(ql));
+  renderDSAs(filteredDSAs);
+}
+
+function renderDSAs(list){
+  const el=document.getElementById('dsaList');
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">🔍</div>No DSAs found.</div>';return;}
+  el.innerHTML=list.map((d,i)=>{
+    const sel=selectedDSA&&selectedDSA.number===d.number;
+    return`<div class="dsa-item${sel?' selected':''}" onclick="selectDSA(${i})">
+      <div class="dsa-av">${d.name.charAt(0)}</div>
+      <div class="dsa-info">
+        <div class="dsa-name">${d.name}</div>
+        <div class="dsa-meta">📞 ${d.phone} · 📍 ${d.province}${d.shortCode&&d.shortCode!=='0'?' · Code: '+d.shortCode:''}</div>
+      </div>
+      <div class="dsa-check">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectDSA(i){
+  selectedDSA=filteredDSAs[i];
+  renderDSAs(filteredDSAs);
+  const a=document.getElementById('selDSAAlert');
+  a.innerHTML=`✅ <strong>${selectedDSA.name}</strong> · ${selectedDSA.phone} · ${selectedDSA.province}`;
+  a.className='alert alert-info';
+  a.classList.remove('hidden');
+  checkSubmitBtn();
+}
+
+// ═══════════════════════════════════════════════
+// SIM VALIDATION
+// ═══════════════════════════════════════════════
+function validateSIM(inp){
+  const v=inp.value.replace(/\D/g,'');
+  inp.value=v;
+  document.getElementById('simCount').textContent=v.length+'/20';
+  const hint=document.getElementById('simHint');
+  inp.classList.remove('valid','invalid');
+
+  if(v.length===0){
+    hint.textContent='Enter the 20-digit ICCID printed on the SIM card';
+  } else if(v.length===20){
+    // Feature 2: instant duplicate check
+    if(knownSIMs.has(v)){
+      inp.classList.add('invalid');
+      hint.innerHTML='🚫 <strong>Duplicate SIM!</strong> This serial has already been submitted — please check the SIM card.';
+      document.getElementById('submitBtn').disabled=true;
+      return;
+    }
+    inp.classList.add('valid');
+    hint.textContent='✅ Valid 20-digit SIM serial number';
+  } else {
+    inp.classList.add('invalid');
+    hint.textContent=`⚠️ Need ${20-v.length} more digit${20-v.length!==1?'s':''}`;
+  }
+  checkSubmitBtn();
+}
+
+function checkSubmitBtn(){
+  const sim=document.getElementById('simInput').value;
+  const isDupe=sim.length===20&&knownSIMs.has(sim);
+  document.getElementById('submitBtn').disabled=!(sim.length===20&&selectedDSA&&!isDupe);
+}
+
+// ═══════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════
+async function submitSIM(){
+  const sim=document.getElementById('simInput').value;
+  const btn=document.getElementById('submitBtn');
+  const alertDiv=document.getElementById('submitAlert');
+  if(sim.length!==20||!selectedDSA)return;
+
+  btn.innerHTML='<div class="loader"></div> SUBMITTING...';
+  btn.disabled=true;
+
+  const payload={
+    action:'submit',
+    timestamp:new Date().toISOString(),
+    mdeName:session.mde.name,
+    mdeNumber:session.mde.number,
+    dsaName:selectedDSA.name,
+    dsaNumber:selectedDSA.number,
+    dsaProvince:selectedDSA.province,
+    dsaShortCode:selectedDSA.shortCode,
+    simSerial:sim,
+    status:'Pending'
+  };
+
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    sessionLog.unshift({...payload,localTime:new Date()});
+    knownSIMs.add(sim); // Feature 2: block re-use of same SIM
+    renderLog();
+    alertDiv.className='alert alert-success';
+    alertDiv.innerHTML=`✅ <strong>Submitted!</strong> SIM <code style="font-family:monospace">${sim}</code> → <strong>${selectedDSA.name}</strong> · Pending`;
+    alertDiv.classList.remove('hidden');
+    document.getElementById('simInput').value='';
+    document.getElementById('simCount').textContent='0/20';
+    document.getElementById('simInput').classList.remove('valid','invalid');
+    selectedDSA=null;
+    renderDSAs(filteredDSAs);
+    document.getElementById('selDSAAlert').classList.add('hidden');
+    document.getElementById('simHint').textContent='Enter the 20-digit ICCID printed on the SIM card';
+    btn.disabled=true;
+    showToast('✅ SIM submitted successfully!');
+    if(session.mde) updateMDEProgressCard();
+  }catch(e){
+    alertDiv.className='alert alert-error';
+    alertDiv.innerHTML='❌ Submission failed. Check your connection.';
+    alertDiv.classList.remove('hidden');
+  }
+  btn.innerHTML='SUBMIT SIM MAPPING →';
+  if(document.getElementById('simInput').value.length!==20||!selectedDSA)btn.disabled=true;
+}
+
+// ═══════════════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════════════
+function renderLog(){
+  const el=document.getElementById('logContent');
+  if(!sessionLog.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No submissions yet.</div>';return;}
+  el.innerHTML=sessionLog.map(s=>`
+    <div class="sub-item">
+      <div class="sub-hdr"><div class="sub-dsa-name">${s.dsaName}</div><span class="badge badge-pending">Pending</span></div>
+      <div class="sub-sim">${s.simSerial}</div>
+      <div class="sub-meta">📍 ${s.dsaProvince} · 📞 ${s.dsaNumber}</div>
+      <div class="sub-meta" style="margin-top:3px;">🕐 ${s.localTime.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+async function loadMyLog(){
+  if(!session.role){showToast('Start a session first.');return;}
+  const el=document.getElementById('logContent');
+  el.innerHTML='<div class="empty"><div class="empty-icon" style="font-size:24px">🔄</div>Loading from Google Sheets…</div>';
+  try{
+    const who=session.mde?session.mde.name:(session.adminName||'');
+    const url=`${SCRIPT_URL}?action=getMyLog&mdeName=${encodeURIComponent(who)}&role=${session.role}`;
+    const r=await fetch(url,{redirect:'follow'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(d.error) throw new Error(d.error);
+    if(d.rows&&d.rows.length){
+      el.innerHTML=d.rows.map(row=>{
+        const statusLower=(row.status||'pending').toLowerCase();
+        const badgeClass=statusLower==='approved'?'badge-approved':statusLower==='rejected'?'badge-rejected':'badge-pending';
+        return`<div class="sub-item">
+          <div class="sub-hdr"><div class="sub-dsa-name">${row.dsaName||'—'}</div><span class="badge ${badgeClass}">${row.status||'Pending'}</span></div>
+          <div class="sub-sim">${row.simSerial||'—'}</div>
+          <div class="sub-meta">📍 ${row.dsaProvince||'—'} · ${row.dsaNumber||'—'}</div>
+          <div class="sub-meta">🕐 ${row.timestamp||'—'}</div>
+          ${row.administrator?`<div class="sub-meta">👤 ${row.administrator}</div>`:''}
+          ${row.rejectionReason?`<div class="sub-meta" style="color:var(--red)">❌ Reason: ${row.rejectionReason}</div>`:''}
+          ${row.tat&&row.tat!==''?`<div class="sub-meta">⏱ TAT: <strong>${parseFloat(row.tat).toFixed(1)} days</strong></div>`:''}
+        </div>`;
+      }).join('');
+      // Sync approved DSAs + known SIMs from freshly loaded data
+      d.rows.forEach(function(row){
+        if(row.simSerial&&row.simSerial.length===20) knownSIMs.add(row.simSerial);
+        if(String(row.status).toLowerCase()==='approved'&&row.dsaNumber) approvedDSANums.add(String(row.dsaNumber).trim());
+      });
+      if(approvedDSANums.size>0&&session.mde){ removeApprovedDSAs(); }
+      showToast(`✅ Loaded ${d.rows.length} submission${d.rows.length!==1?'s':''}`);
+    }else{
+      el.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No submissions found for your account.</div>';
+      showToast('No submissions found.');
+    }
+  }catch(err){
+    el.innerHTML='<div class="empty"><div class="empty-icon">⚠️</div>Could not load — tap Refresh to try again.<br><small style="color:var(--text2)">'+err.message+'</small></div>';
+    showToast('⚠️ Load failed: '+err.message);
+    console.error('loadMyLog error:',err);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+async function loadDashboard(){
+  if(!session.role){showToast('Start a session first.');return;}
+  const btn=document.getElementById('dashLoadBtn');
+  btn.innerHTML='<div class="loader" style="border-top-color:var(--qblack)"></div> LOADING…';
+  btn.disabled=true;
+  try{
+    let url=SCRIPT_URL+'?action=getDashboard';
+    if(session.role==='mde') url+='&mdeName='+encodeURIComponent(session.mde.name)+'&role=mde';
+    else url+='&role=admin';
+    const r=await fetch(url,{redirect:'follow'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(d.error) throw new Error(d.error);
+    renderDashboard(d);
+    showToast('✅ Dashboard loaded');
+  }catch(err){
+    showToast('⚠️ Load failed: '+err.message);
+    console.error('loadDashboard error:',err);
+    document.getElementById('tatStats').innerHTML='<div class="empty">Failed to load. Check Apps Script is deployed correctly.<br><small>'+err.message+'</small></div>';
+  }
+  btn.innerHTML='🔄 LOAD DASHBOARD';
+  btn.disabled=false;
+}
+
+function renderDashboard(d){
+  document.getElementById('d-total').textContent=d.total||0;
+  document.getElementById('d-pending').textContent=d.pending||0;
+  document.getElementById('d-approved').textContent=d.approved||0;
+  document.getElementById('d-rejected').textContent=d.rejected||0;
+
+  if(session.mde) document.getElementById('dashMDEsub').textContent=`${d.total||0} total submissions`;
+
+  // TAT
+  const tatEl=document.getElementById('tatStats');
+  if(d.tatAvg!==undefined&&d.tatCount>0){
+    const avg=parseFloat(d.tatAvg),pct=Math.min((avg/7)*100,100);
+    const cls=avg<=1?'tat-fast':avg<=3?'tat-med':'tat-slow';
+    const barCol=avg<=1?'var(--green)':avg<=3?'var(--orange)':'var(--red)';
+    tatEl.innerHTML=`
+      <div class="tat-row"><span style="color:var(--text2)">Average TAT</span><span class="tat-val ${cls}">${avg.toFixed(1)} days</span></div>
+      <div class="bar-wrap" style="margin-bottom:10px;"><div class="bar" style="width:${pct}%;background:${barCol}"></div></div>
+      <div class="tat-row"><span style="color:var(--text2)">Fastest</span><span class="tat-val tat-fast">${parseFloat(d.tatMin||0).toFixed(1)}d</span></div>
+      <div class="tat-row"><span style="color:var(--text2)">Slowest</span><span class="tat-val tat-slow">${parseFloat(d.tatMax||0).toFixed(1)}d</span></div>
+      <div class="tat-row"><span style="color:var(--text2)">Based on</span><span style="font-weight:700">${d.tatCount} activations</span></div>`;
+  }else{tatEl.innerHTML='<div class="empty"><div>No completed activations yet.</div></div>';}
+
+  // Pending wait
+  const pwEl=document.getElementById('pendingWait');
+  if(d.pendingAvgWait!==undefined){
+    const pw=parseFloat(d.pendingAvgWait),cls=pw<=2?'tat-fast':pw<=5?'tat-med':'tat-slow';
+    pwEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--text2);font-size:13px;">Avg time in Pending</span><span class="tat-val ${cls}" style="font-size:28px;">${pw.toFixed(1)} days</span></div>
+    <div style="font-size:12px;color:var(--text2);margin-top:8px;">Average time submissions wait before admin action is taken.</div>`;
+  }
+
+  // Province — admin only
+  if(session.role==='admin'&&d.byProvince&&d.byProvince.length){
+    const maxT=Math.max(...d.byProvince.map(p=>p.total),1);
+    document.getElementById('provinceStats').innerHTML=d.byProvince.map(p=>`
+      <div class="prov-row">
+        <div class="prov-name">${p.province}</div>
+        <div class="prov-bar-wrap"><div class="prov-bar" style="width:${Math.round(p.total/maxT*100)}%"></div></div>
+        <div class="prov-nums"><strong>${p.total}</strong> · <span style="color:var(--green)">${p.approved}✓</span> <span style="color:var(--orange)">${p.pending}⏳</span> <span style="color:var(--red)">${p.rejected}✗</span></div>
+      </div>`).join('');
+  }
+
+  // Feature 3: MDE progress breakdown — admin only
+  if(session.role==='admin'&&d.byMDE&&d.byMDE.length){
+    const allMDEs=getActiveMDEData();
+    const mdeMap={};
+    allMDEs.forEach(m=>{ mdeMap[m.name]=(m.dsas||[]).length; });
+    const rows=d.byMDE.slice(0,30).map(m=>{
+      const totalAssigned=mdeMap[m.mde]||m.total;
+      const completed=m.approved;
+      const remaining=totalAssigned-completed;
+      const pct=totalAssigned>0?Math.round((completed/totalAssigned)*100):0;
+      const barCol=pct===100?'var(--green)':pct>=50?'var(--qblue)':'var(--orange)';
+      return `<div style="padding:9px 0;border-bottom:1px solid var(--qgrey-light);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <div style="font-size:13px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.mde}</div>
+          <div style="font-size:12px;color:var(--text2);white-space:nowrap;margin-left:10px;">
+            <span style="color:var(--green);font-weight:700">${completed} done</span> · <span style="color:var(--orange);font-weight:700">${remaining<0?0:remaining} left</span> <span style="color:var(--text2);">· ${pct}%</span>
+          </div>
+        </div>
+        <div style="background:var(--qgrey-light);border-radius:4px;height:7px;overflow:hidden;">
+          <div style="width:${pct}%;height:7px;background:${barCol};border-radius:4px;transition:width 0.5s"></div>
+        </div>
+      </div>`;
+    });
+    document.getElementById('mdeBreakdown').innerHTML=rows.join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function showTab(t){
+  ['submit','log','dashboard'].forEach(n=>{
+    document.getElementById('tab-'+n).classList.toggle('hidden',n!==t);
+    document.getElementById('tab-btn-'+n).classList.toggle('active',n===t);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function showErr(el,msg){el.innerHTML='⚠️ '+msg;el.classList.remove('hidden');}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// Close dropdown when clicking outside
+window.addEventListener('click',e=>{
+  if(!e.target.closest('.dd-wrap')) document.getElementById('mdeDropdown').style.display='none';
+});
+
+// Auto-load live MDE data on page open
+window.addEventListener('load', () => tryLoadLiveMasterList());
+</script>
+</body>
+</html>
